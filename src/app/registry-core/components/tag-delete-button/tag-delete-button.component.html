@@ -1,0 +1,31 @@
+<div *ngIf="tags && tags.length > 0">
+    <button type="button" class="btn btn-outline-danger btn-sm" (click)="delete(tags, content)">Delete Tag</button>
+    <ng-template #content let-modal>
+        <div class="modal-header">
+            <h4 class="modal-title" *ngIf="tags.length==1">Delete Tag</h4>
+            <h4 class="modal-title" *ngIf="tags.length>1">Delete Tags</h4>
+        </div>
+        <div class="modal-body">
+            <form>
+                <span class="mb-3" *ngIf="tags.length === 1">
+                    Are you sure you want to delete tag <span class="highlight">{{tags[0].name}} </span>
+                </span>
+                <span class="mb-3" *ngIf="tags.length > 1">
+                    Are you sure you want to delete {{tags.length}} tags
+                </span>
+                <span>in {{tags[0].repository.getRelativePath()}}</span>?
+                <p>
+                    <br>
+                    <span class="text-danger">This operation can't be undone.</span>
+                </p>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline-primary" (click)="modal.close(false)">Cancel</button>
+            <button type="button" class="btn btn-outline-danger" (click)="modal.close(true)">Delete</button>
+        </div>
+    </ng-template>
+</div>
+<div *ngIf="!tags || tags.length == 0">
+    No tags provided
+</div>

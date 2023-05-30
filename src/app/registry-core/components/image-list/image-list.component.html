@@ -1,0 +1,33 @@
+<div *ngIf="tag">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Digest</th>
+                <th scope="col">Platform</th>
+                <th scope="col">Compressed Size</th>
+                <th scope="col">Created</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let image of tag.images">
+                <td>
+                    <a
+                        [routerLink]="'/repositories/'+tag.repository.getRelativePath()+'/tags/'+tag.name+'/images/'+image.digestShort">
+                        {{image.digestShort}}
+                    </a>
+                </td>
+                <td>
+                    {{image.platformString}}
+                </td>
+                <td>
+                    {{image.totalCompressedSizeString}}
+                </td>
+                <td>
+                    <span placement="top" [ngbTooltip]="image.configuration.created| date:'medium'">
+                        {{image.configuration.created| timeAgo}}
+                    </span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

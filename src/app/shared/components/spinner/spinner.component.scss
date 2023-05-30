@@ -1,0 +1,18 @@
+.spinner-overlay {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.center-in-screen {
+    display: flex;
+    margin: 0 auto;
+}
+
+.spinner {
+    width: 4rem;
+    height: 4rem;
+}

@@ -1,0 +1,33 @@
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Tag</th>
+            <th scope="col">Platform</th>
+            <th scope="col">Type</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let tag of tags">
+            <td>
+                <a [routerLink]="'/repositories/'+tag.repository.getRelativePath()+'/tags/'+tag.name">
+                    {{tag.name}}
+                </a>
+            </td>
+            <td>
+                <span *ngFor="let os of tag.getPlatformNames()" [ngbTooltip]="tag.getPlatformTooltip(os)">
+                    {{os}}
+                </span>
+            </td>
+            <td>
+                <span placement="top" [ngbTooltip]="tag.mediaType">
+                    {{tag.getType()}}
+                </span>
+            </td>
+        </tr>
+        <tr *ngIf="showMoreLine">
+            <td>...</td>
+            <td>...</td>
+            <td>...</td>
+        </tr>
+    </tbody>
+</table>

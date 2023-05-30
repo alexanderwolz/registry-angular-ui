@@ -1,0 +1,43 @@
+<nav class="navbar navbar-dark bg-primary navbar-expand-sm">
+    <div class="container-fluid">
+
+        <a [routerLink]="['/']">
+            <app-logo [dark]="true"></app-logo>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu"
+            aria-controls="navbarMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarMenu">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+
+                <li class="nav-item" *ngFor="let segment of segments">
+                    <a class="nav-link" [routerLink]="segment.routerLink" [queryParams]="segment.queryParams"
+                        [attr.aria-current]="segment.active ? 'page':null"
+                        [ngClass]="{'active': segment.active===true}">
+                        {{segment.name}}
+                    </a>
+                </li>
+
+                <!-- logout -->
+                <li class="nav-item dropdown" *ngIf="isAuthActive">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        {{username}}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item" [routerLink]="['/logout']">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Logout
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+</nav>

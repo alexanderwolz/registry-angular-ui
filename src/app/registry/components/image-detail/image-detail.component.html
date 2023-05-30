@@ -1,0 +1,101 @@
+<div *ngIf="loading">
+    <app-spinner></app-spinner>
+</div>
+
+
+<div *ngIf="!loading && repository && tag && image">
+
+    <app-breadcrumb-menu></app-breadcrumb-menu>
+
+    <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+        {{errorMessage}}
+        <a [routerLink]="'/repositories/'">
+            <div>back to overview</div>
+        </a>
+    </div>
+
+    <div class="container my-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="card-text">
+                    <div class="row">
+                        <div class="col-9 col-md-10">
+                            <app-title [segments]="repository.getAllNamespacesAndNameAsArray()" [title]="tag.name">
+                            </app-title>
+                            <div class="mt-2">
+                                <span class="digest-title">Digest: </span>
+                                <span class="digest-value">{{image.digest}}</span>
+                            </div>
+                        </div>
+                        <div class="col-3 col-md-2">
+                            <app-tag-delete-button class="text-end" [tags]="[tag]"></app-tag-delete-button>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 1rem;">
+                        <div class="col">
+                            <div class="element-title">Platform</div>
+                            <div class="element-value">{{image.platformString}}</div>
+                        </div>
+                        <div class="col border-left">
+                            <div class="element-title">Compressed Size</div>
+                            <div class="element-value">{{image.totalCompressedSizeString}}</div>
+                        </div>
+                        <div class="col border-left">
+                            <div class="element-title">Created</div>
+                            <div class="element-value">
+                                <span placement="top" [ngbTooltip]="image.configuration.created| date:'medium'">
+                                    {{image.configuration.created| timeAgo}}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col border-left">
+                            <div class="element-title">Type</div>
+                            <div class="element-value">
+                                <span placement="top" [ngbTooltip]="image.manifest.mediaType">
+                                    {{image.getType()}}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="card-text">
+                    <div class="title">
+                        <div class="d-flex w-100 justify-content-between">
+                            <span>Image Layers ({{image.layers.length}})</span>
+                            <!-- <button class="btn btn-outline-primary btn-sm">Show as Dockerfile</button> -->
+                        </div>
+                    </div>
+                    <div class="row">
+                        <ul class="list-group list-group-flush p-2 layer-container">
+                            <div *ngFor="let layer of image.layers; let index = index">
+
+                                <ng-template #content let-modal class="width:100%">
+                                    <div class="modal-body">
+                                        <span class="layer-command">{{layer.command}} </span>
+                                        <span>{{layer.instruction}}</span>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-outline-primary btn-sm"
+                                            (click)="modal.close(false)">Close</button>
+                                    </div>
+                                </ng-template>
+
+                                <li class="list-group-item" (click)="showLayerDialog(layer,content)">
+                                    <span class="layer-index">{{index+1}} </span>
+                                    <span class="layer-command">{{layer.command}} </span>
+                                    <span class="layer-instruction">{{layer.getInstructionCropped(55)}}</span>
+                                    <span class="layer-size">{{layer.getCompressedSizeString()}}</span>
+                                </li>
+                            </div>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

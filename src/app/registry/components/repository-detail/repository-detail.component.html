@@ -1,0 +1,64 @@
+<div *ngIf="loading">
+    <app-spinner></app-spinner>
+</div>
+
+
+<div *ngIf="!loading && repository">
+
+    <app-breadcrumb-menu></app-breadcrumb-menu>
+
+    <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+        {{errorMessage}}
+        <a [routerLink]="'/repositories/'">
+            <div>back to overview</div>
+        </a>
+    </div>
+
+    <div class="container my-4">
+        <app-title-box [segments]="repository.allNamespaces" [title]="repository.name"></app-title-box>
+        <div class="card">
+            <div class="card-body">
+                <div class="card-text">
+                    <div class="container">
+                        <h5 class="card-subtitle"> Tags </h5>
+                        <p class="card-title">
+                            This repository contains
+                            {{totalTagCount == 0 ? 'no' : totalTagCount}} {{totalTagCount == 1 ?'tag':'tags'}}.
+                        </p>
+                        <div *ngIf="tags.length > 0">
+                            <app-tag-list [tags]="tags" [showMoreLine]="showMoreLine"></app-tag-list>
+                            <a class="btn btn-outline-primary btn-sm" role="button"
+                                [routerLink]="['/repositories/' + repository.getRelativePath() + '/tags']">
+                                Show more
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- <h5>Docker commands</h5>
+        To push a new tag to this repository
+        <span class="badge cmd">docker push
+            {{registryHost}}/{{repository.getFullName()}}:tagname</span> -->
+
+
+        <!-- <div *ngFor="let tag of tags">
+
+            <app-link-box [routerLink]="'/repository/'+repository.getFullName()+'/tag/'+tag">
+                <div *ngIf="repository.namespace">
+                    <i class="fa-brands fa-docker"></i>
+                    <span>{{ repository.namespace }} / </span>
+                    <span>{{repository.name}}</span>
+                </div>
+                <div *ngIf="!repository.namespace">
+                    <i class="fa-brands fa-docker"></i>
+                    <span>{{repository.getFullName()+":"+tag}}</span>
+                </div>
+            </app-link-box>
+
+        </div> -->
+    </div>
+
+</div>

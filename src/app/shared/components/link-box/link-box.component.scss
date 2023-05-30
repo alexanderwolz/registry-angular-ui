@@ -1,0 +1,27 @@
+@import "variables";
+
+.link,
+.link:hover {
+    font-size: smaller;
+    color: $text-color;
+    text-decoration: none;
+    text-decoration-line: none;
+}
+
+.card{
+    margin-bottom: 1em;
+}
+
+.card:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, .12), 0 4px 8px rgba(0, 0, 0, .06);
+    transition: 0.5s box-shadow;
+}
+
+.card-text {
+    font-weight: 400;
+}
+
+.card-body{
+    padding-top: 8px;
+    padding-bottom: 8px;
+}

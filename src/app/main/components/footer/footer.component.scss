@@ -1,0 +1,31 @@
+@use 'sass:math';
+@import "variables";
+
+.footer {
+  font-size: small;
+  font-weight: 100;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: math.div($footer-height, 3);
+  background-color: $footer-background-color;
+  color: $footer-color;
+}
+
+.footer a {
+  color: $footer-color;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+.footer li a {
+  font-size: 1em;
+  margin: 0 1em;
+}
+
+.footer li a:hover {
+  color: $blue2;
+}
+

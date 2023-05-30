@@ -1,0 +1,9 @@
+<div class="notification-container position-fixed top-0 end-0 p-3" *ngIf="notifications">
+    <div *ngFor="let notification of notifications" class="alert alert-dismissible fade show"
+        [ngClass]="notification.classes" role="alert">
+        <strong>{{notification.title}} </strong>
+        <span [innerHTML]="notification.message"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
+            (click)="removeNotification(notification)"></button>
+    </div>
+</div>

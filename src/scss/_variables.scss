@@ -1,0 +1,96 @@
+// -- Color Definitions -- //
+$blue: #286090;
+$blue2: #233c59;
+$blue3: #0e1627;
+$blue4: rgba(40, 96, 144, 0.4);
+$docker-blue: rgb(8, 109, 215);
+$gray: #484848;
+$gray2: rgb(199, 199, 201);
+$gray3: rgb(152, 155, 156);
+$gray4: rgb(247, 247, 249);
+$gray-transparent: rgba(0, 0, 0, 0.33);
+$gray-transparent2: rgba(51, 51, 51, 0.1);
+$gray5: #cecece;
+$gray6: #e7e7e7;
+$gray7: #e9ecef;
+$white: #fff;
+$black: #000;
+
+// -- Color Variables -- //
+$logo-primary-color: $blue;
+$logo-secondary-color: $gray;
+$logo-secondary-color-inverted: $gray5;
+
+$border-shadow: $gray-transparent;
+
+$navbar-color: $gray;
+$navbar-background-color: $blue;
+
+$footer-background-color: $blue;
+$footer-color: $white;
+
+$label-color: $gray6;
+
+// -- Custom Variables -- //
+$footer-height: 150px;
+$navbar-height: 57px;
+
+// -- Bootstrap Overrides -- //
+
+$font-size-root: null !default;
+$font-size-base: 0.95rem !default; //was 1rem
+$font-size-sm: $font-size-base * .875 !default;
+$font-size-lg: $font-size-base * 1.25 !default;
+
+$primary: $blue;
+$secondary: $gray;
+$body-color: $gray;
+$text-color: $black;
+
+$border-radius: none !default;
+$border-radius-sm: none !default;
+$border-radius-lg: none !default;
+$border-radius-xl: none !default;
+$border-radius-2xl: none !default;
+$border-radius-pill: none !default;
+
+$tooltip-font-size: $font-size-sm !default;
+$tooltip-max-width: 300px !default;
+$tooltip-color: $white !default;
+$tooltip-bg: $blue2 !default;
+$tooltip-border-radius: $border-radius !default;
+$tooltip-padding-y: 1rem * .25 !default;
+$tooltip-padding-x: 1rem * .5 !default;
+
+$popover-max-width: 300px !default;
+$popover-body-color: $white !default;
+$popover-bg: $blue2 !default;
+$popover-header-color: $white !default;
+$popover-header-bg: shade-color($popover-bg, 6%) !default;
+$popover-body-padding-y: 1rem * .25 !default;
+$popover-body-padding-x: 1rem * .5 !default;
+
+$breadcrumb-divider: quote(">");
+$breadcrumb-bg: $white !default;
+$breadcrumb-margin-bottom: 0 !default;
+$breadcrumb-padding-y: 0.5rem !default;
+$breadcrumb-padding-x: 0.5rem !default;
+$breadcrumb-divider-color: $primary !default;
+$breadcrumb-active-color: $blue2 !default;
+
+$toast-max-width: 30rem !default;
+$toast-spacing: 0.5rem !default;
+// $toast-background-color: none !default;
+// $toast-header-color: none !default;
+// $toast-header-background-color: none !default;
+// $toast-color: none !default;
+
+// -- font definitons -- //
+$font-family-sans-serif: Roboto, system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+$font-family-monospace: Source Code Pro, Consolas, Monaco, Andale Mono, Ubuntu Mono, monospace !default;
+
+
+// -- Bootstrap Variables and Functions-- //
+// -- must be imported AFTER variable definitions -- //
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";

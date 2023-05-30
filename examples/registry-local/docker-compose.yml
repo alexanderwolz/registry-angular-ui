@@ -1,0 +1,50 @@
+version: "3.9"
+services:
+
+  registry:
+    container_name: registry
+    image: registry:2.8.2
+    restart: unless-stopped
+    environment:
+      REGISTRY_HTTP_HOST: "http://localhost:8000"
+      REGISTRY_STORAGE_DELETE_ENABLED: "true"
+      REGISTRY_AUTH_HTPASSWD_REALM: basic-realm
+      REGISTRY_AUTH_HTPASSWD_PATH: /htpasswd
+    volumes:
+      - ./htpasswd:/htpasswd:ro
+    networks:
+      - backend
+
+  #We need a proxy, because CORS pre-flight won't return 200 (registry bug)
+  
+  registry_proxy:
+    container_name: registry_proxy
+    image: nginx:1.24.0
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - backend
+
+  registry_angular_ui:
+    container_name: registry_angular_ui
+    hostname: registry_angular_ui
+    image: alexanderwolz/registry-angular-ui:latest
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      REGISTRY_HOST: http://localhost:8000
+      TOKEN_SECRET: myfancysupersecureappsecret
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    depends_on:
+      - registry
+    networks:
+      - backend
+
+networks:
+  backend:

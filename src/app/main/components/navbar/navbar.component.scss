@@ -1,0 +1,14 @@
+@import "variables";
+
+.navbar a:hover{
+  text-decoration: none;
+}
+
+.nav-link, .dropdown-item{
+  font-weight: 200;
+}
+
+.dropdown-item i{
+  color:$primary
+}
+  

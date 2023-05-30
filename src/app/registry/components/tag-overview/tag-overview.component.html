@@ -1,0 +1,87 @@
+<div *ngIf="loading">
+    <app-spinner></app-spinner>
+</div>
+
+
+<div *ngIf="!loading && repository && tagContainers">
+
+    <app-breadcrumb-menu></app-breadcrumb-menu>
+
+    <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+        {{errorMessage}}
+        <a [routerLink]="'/repositories/'">
+            <div>back to overview</div>
+        </a>
+    </div>
+
+    <div class="container my-4">
+        <app-title-box [segments]="repository.allNamespaces" [title]="repository.name">
+            <app-tag-delete-button class="text-end" [tags]="selection"
+                *ngIf="selection.length>0"></app-tag-delete-button>
+        </app-title-box>
+        <div class="card" *ngIf="tagContainers.length == 0">
+            <div class="card-body">
+                <div class="card-text">
+                    <div class="container">
+                        <h5 class="card-subtitle">Tags</h5>
+                        <p class="card-title">
+                            This repository contains no tags.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-check" *ngIf="tagContainers.length > 0">
+
+            <hr class="my-4">
+
+            <div class="select-all">
+                <input class="form-check-input" type="checkbox" [(ngModel)]="selectAll"
+                    (change)="updateAllSelections(selectAll)">
+                <label class="form-check-label" for="flexCheckDefault">
+                    Select all
+                </label>
+            </div>
+
+
+            <hr class="my-4">
+
+            <div *ngFor="let tagContainer of tagContainers">
+
+                <input class="form-check-input" type="checkbox" [(ngModel)]="tagContainer.isSelected"
+                    (change)="updateSelection(tagContainer)">
+                <div class="card my-3">
+                    <div class="card-body">
+                        <div class="card-text">
+                            <div class="row">
+                                <div class="col-sm-2 col-md-2">
+                                    <div class="card-subtitle">Tag</div>
+                                    <div class="card-title">
+                                        <a
+                                            [routerLink]="'/repositories/'+tagContainer.tag.repository.getRelativePath()+'/tags/'+tagContainer.tag.name">
+                                            {{tagContainer.tag.name}}
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="col-sm-10 col-md-10 text-end">
+                                    <app-copy-text class="badge cmd" [text]="tagContainer.tag.getPullCommand()"
+                                        tooltipText="Pull command copied"></app-copy-text>
+                                </div>
+                            </div>
+                            <app-image-list [tag]="tagContainer.tag"></app-image-list>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+<!-- <h5>Docker commands</h5>
+        To push a new tag to this repository
+        <span class="badge cmd">docker push
+            {{registryHost}}/{{repository.getFullName()}}:tagname</span> -->

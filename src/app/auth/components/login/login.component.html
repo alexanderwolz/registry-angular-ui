@@ -1,0 +1,105 @@
+<div class="container-fluid ps-md-0">
+    <div class="row g-0">
+
+        <!-- background -->
+        <div class="d-none d-md-flex col-md-4 col-lg-4 background"></div>
+
+        <div class="col-md-8 col-lg-8">
+
+            <div class="vh-100 d-flex align-items-center py-5">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-9 col-lg-8 mx-auto">
+
+                            <div class="card">
+                                <div class="card-body">
+
+                                    <div class="mb-3">
+                                        <app-logo></app-logo>
+                                    </div>
+
+                                    <h5 class="mb-4 title">Welcome back!</h5>
+
+                                    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                                        <div class="form-floating mb-3">
+                                            <input type="text" formControlName="username" class="form-control"
+                                                id="floatingInput" placeholder="Username"
+                                                [ngClass]="{ 'is-invalid': submitted && form['username'].errors }">
+                                            <label for="floatingInput">Username</label>
+                                            <div *ngIf="submitted && form['username'].errors" class="invalid-feedback">
+                                                <div *ngIf="form['username'].errors['required']">Username is required
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-floating mb-3">
+                                            <input type="password" formControlName="password" class="form-control"
+                                                id="floatingPassword" placeholder="Password"
+                                                [ngClass]="{ 'is-invalid': submitted && form['password'].errors }">
+                                            <label for="floatingPassword">Password</label>
+                                            <div *ngIf="submitted && form['password'].errors" class="invalid-feedback">
+                                                <div *ngIf="form['password'].errors['required']">Password is required
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-grid">
+                                            <button class="btn btn-lg btn-primary btn-login text-uppercase fw-bold mb-2"
+                                                type="submit" [attr.disabled]="loginForm.disabled ? '' : null">Sign in</button>
+                                        </div>
+
+                                        <div class="d-grid">
+                                            <div *ngIf="errorMessage" class="alert alert-danger mt-3 mb-0">
+                                                {{errorMessage}}
+                                            </div>
+                                        </div>
+
+                                    </form>
+
+
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- <div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3 mt-5">
+            <div class="card">
+                <h4 class="card-header">Login</h4>
+                <div class="card-body">
+                    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" formControlName="username" class="form-control"
+                                [ngClass]="{ 'is-invalid': submitted && form.username.errors }" />
+                            <div *ngIf="submitted && form.username.errors" class="invalid-feedback">
+                                <div *ngIf="form.username.errors.required">Username is required</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" formControlName="password" class="form-control"
+                                [ngClass]="{ 'is-invalid': submitted && form.password.errors }" />
+                            <div *ngIf="submitted && form.password.errors" class="invalid-feedback">
+                                <div *ngIf="form.password.errors.required">Password is required</div>
+                            </div>
+                        </div>
+                        <button [disabled]="loading" class="btn btn-primary" style="margin-top: 1em;">
+                            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                            Login
+                        </button>
+                        <div *ngIf="errorMessage" class="alert alert-danger mt-3 mb-0">{{errorMessage}}</div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> -->

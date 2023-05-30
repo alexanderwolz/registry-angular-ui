@@ -1,0 +1,17 @@
+@import "variables";
+
+.background {
+    background-color: $blue;
+    background-size: cover;
+    background-position: center;
+}
+
+.btn-login {
+    font-size: 0.9rem;
+    letter-spacing: 0.05rem;
+    padding: 0.75rem 1rem;
+}
+
+.title{
+    font-weight: 200;
+}

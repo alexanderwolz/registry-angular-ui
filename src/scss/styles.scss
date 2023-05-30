@@ -1,0 +1,75 @@
+// -- custom variables -- //
+@import "variables";
+
+// -- Font Awesome -- //
+@import "@fortawesome/fontawesome-free/scss/fontawesome";
+@import "@fortawesome/fontawesome-free/scss/brands";
+@import "@fortawesome/fontawesome-free/scss/regular";
+@import "@fortawesome/fontawesome-free/scss/solid";
+@import "@fortawesome/fontawesome-free/scss/v4-shims";
+
+// -- Bootstrap -- //
+@import "bootstrap/scss/bootstrap";
+
+// -- Global Styles -- //
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  background-color: $gray4;
+}
+
+a:hover {
+  color: $primary;
+}
+
+a:not([class]) {
+  text-decoration: none;
+}
+
+a:not([class]):hover {
+  text-decoration: underline;
+}
+
+.dropdown-menu a {
+  cursor: pointer;
+}
+
+// .card-subtitle{
+//   color:$gray3;
+//   font-weight: 200;
+//   font-size: small;
+//   text-transform: uppercase;
+//   margin-bottom: 0.3rem;
+// }
+
+// .card-title{
+//   font-size: small;
+// }
+
+.badge.cmd {
+  background-color: $gray6;
+  color: $gray;
+  padding: 1em;
+  font-family: monospace;
+  font-weight: 100;
+  font-size: x-small;
+  border: solid $gray2 1px;
+  white-space: normal;
+  max-width: 500px;
+}
+
+.card-subtitle {
+  color: $gray3;
+  font-weight: 200;
+  font-size: small;
+  text-transform: uppercase;
+  margin-bottom: 0.3rem;
+}
+
+.card-title {
+  font-size: smaller;
+  color: $primary;
+}

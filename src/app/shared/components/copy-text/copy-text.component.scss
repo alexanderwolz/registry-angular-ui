@@ -1,0 +1,12 @@
+@import "variables";
+
+span.copy-button {
+    white-space: normal;
+    font-size: larger;
+    color: $gray;
+    margin-left: 0.2rem;
+}
+
+span.copy-button:hover  {
+    color: $blue
+}

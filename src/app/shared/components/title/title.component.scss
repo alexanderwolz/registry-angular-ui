@@ -1,0 +1,18 @@
+@import "variables";
+
+i.fa-docker {
+    color: $blue;
+    margin-right: 0.5em;
+}
+
+.title-container{
+    color: $gray;
+    font-size: medium;
+    font-weight: 200;
+}
+
+.title{
+    //font-size: large;
+    color: $primary;
+    font-weight: 100;
+}

@@ -1,0 +1,32 @@
+@import "variables";
+
+.logo {
+    text-transform: uppercase;
+    color: $text-color;
+}
+
+.logo.dark {
+    color: white;
+}
+
+.logo span {
+    color: $logo-primary-color;
+    font-weight: bold;
+}
+
+.logo.dark span {
+    color: $white;
+    font-weight: 100;
+}
+
+.fa-docker {
+    margin-right: 0.5em;
+}
+
+.logo.dark .fa-docker {
+    color: $white;
+}
+
+.logo .fa-docker {
+    color: $blue;
+}

@@ -1,0 +1,28 @@
+<div *ngIf="loading">
+    <app-spinner></app-spinner>
+</div>
+
+
+<div *ngIf="!loading">
+
+    <div class="container mt-5">
+        <div class="jumbotron">
+            <h1 class="display-8">Hello, {{username}}!</h1>
+            <p class="lead">This is a simple Docker registry frontend for lightweight repository management.</p>
+            <hr class="my-4">
+
+            <div>
+                <div>
+                    There {{totalRepositoryCount==1 ? 'is' : 'are'}} <span class="lead">{{totalRepositoryCount}}
+                        repositories</span> at registry <span class="lead">{{registry}}</span> in total.
+                </div>
+                <br>
+            </div>
+            <p class="lead">
+                <a class="btn btn-outline-primary btn-sm" role="button" [routerLink]="['/repositories']">Explore
+                    Docker Repositories</a>
+            </p>
+        </div>
+    </div>
+
+</div>

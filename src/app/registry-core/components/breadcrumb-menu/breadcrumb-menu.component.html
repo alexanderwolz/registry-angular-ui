@@ -1,0 +1,11 @@
+
+<nav class="registry-breadcrumb" aria-label="breadcrumb" *ngIf="segments">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item" *ngFor="let segment of segments">
+            <a [routerLink]="segment.routerLink" [queryParams]="segment.queryParams"
+                [attr.aria-current]="segment.active ? 'page':null" [ngClass]="{'active': segment.active===true}">
+                {{segment.name}}
+            </a>
+        </li>
+    </ol>
+</nav>

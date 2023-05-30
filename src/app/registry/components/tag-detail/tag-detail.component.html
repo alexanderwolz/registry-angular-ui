@@ -1,0 +1,43 @@
+<div *ngIf="loading">
+    <app-spinner></app-spinner>
+</div>
+
+
+<div *ngIf="!loading && tag">
+
+    <app-breadcrumb-menu></app-breadcrumb-menu>
+
+    <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+        {{errorMessage}}
+        <a [routerLink]="'/repositories/'">
+            <div>back to overview</div>
+        </a>
+    </div>
+
+    <div class="container my-4">
+        <app-title-box [segments]="tag.repository.allNamespaces" [title]="tag.repository.name">
+            <app-tag-delete-button class="text-end" [tags]="[tag]"></app-tag-delete-button>
+        </app-title-box>
+
+        <div class="card" *ngIf="tag">
+            <div class="card-body">
+                <div class="card-text">
+                    <div class="row">
+                        <div class="col-3 col-md-2">
+                            <div class="card-subtitle">Tag</div>
+                            <div class="card-title">
+                                {{tag.name}}
+                            </div>
+                        </div>
+                        <div class="col-9 col-md-10 text-end">
+                            <app-copy-text class="badge cmd" [text]="tag.getPullCommand()"
+                                tooltipText="Pull command copied"></app-copy-text>
+                        </div>
+                    </div>
+                </div>
+                <app-image-list [tag]="tag"></app-image-list>
+            </div>
+        </div>
+    </div>
+
+</div>
