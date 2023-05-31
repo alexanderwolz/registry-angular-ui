@@ -14,14 +14,6 @@
         </a>
     </div>
 
-    <div *ngIf="repositories.size == 0">
-        no repositories in registry
-    </div>
-
-    <div *ngIf="!repositories.get(currentNamespace)">
-        no repositories in namespace '{{currentNamespace}}'
-    </div>
-
     <div class="container my-4">
         <div class="row">
             <div class="dropdown namespace">
@@ -48,6 +40,14 @@
         </div>
 
         <div class="row">
+
+            <app-title-box *ngIf="repositories.size == 0" title="This registry does not contain any repositories yet!">
+            </app-title-box>
+
+            <app-title-box *ngIf="repositories.size > 0 && repositories.get(currentNamespace)?.length == 0"
+                title="Namespace '{{currentNamespace}}' does not contain any repositories yet!">
+            </app-title-box>
+
             <div *ngFor="let repository of repositories.get(currentNamespace)">
                 <app-link-box [routerLink]="'/repositories/' + repository.getRelativePath()">
                     <app-title [segments]="repository.allNamespaces" [title]="repository.name"> </app-title>

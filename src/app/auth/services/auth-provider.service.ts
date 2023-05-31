@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, catchError, map, of, throwError } from 'rxjs';
+import { Observable, catchError, map, mergeMap, of, throwError } from 'rxjs';
 import { StorageService } from 'src/app/shared/services/storage.service';
 import { AuthProvider } from '../providers/auth-provider';
 import { BasicAuthProvider } from '../providers/basic-auth-provider';
@@ -14,6 +14,7 @@ import { EventService } from 'src/app/shared/services/event.service';
 })
 export class AuthProviderService {
 
+  private error: Error | null = null;
   private authProvider: AuthProvider | null = null;
 
   private registryBaseUrl: string
@@ -29,7 +30,11 @@ export class AuthProviderService {
   }
 
   getAuthProvider(): AuthProvider | null {
-    return this.authProvider
+    return this.authProvider;
+  }
+
+  getError(): Error | null {
+    return this.error;
   }
 
   getCurrentUsername(): string {
@@ -38,33 +43,61 @@ export class AuthProviderService {
 
   resolveAuthProvider(): Observable<AuthProvider | null> {
     this.authProvider = null
-    return this.http.get(this.registryBaseUrl)
+    return this.http.head(this.registryBaseUrl)
       .pipe(
         map(() => {
           console.warn("Warning: " + this.registryBaseUrl + " seems to be an insecure repository!")
           this.authProvider = new EmptyAuthProvider(this.router, this.storageService, this.eventService, this.tokenSecret)
           return this.authProvider
         }),
-        catchError(err => {
-          this.authProvider = null
-          if (err.status == 401) {
-            const authenticate = err.headers.get("www-authenticate")
+        catchError(error => {
+          if (error.status == 401) {
+            const authenticate = error.headers.get("www-authenticate")
             if (authenticate) {
               if (authenticate.startsWith("Basic")) {
-                this.authProvider = new BasicAuthProvider(this.router, this.storageService, this.eventService, this.tokenSecret, authenticate, this.http, this.registryBaseUrl)
+                const provider = new BasicAuthProvider(this.router, this.storageService, this.eventService, this.tokenSecret, this.http, this.registryBaseUrl)
+                return this.setAuthProvider(provider)
               }
               if (authenticate.startsWith("Bearer")) {
-                this.authProvider = new TokenAuthProvider(this.router, this.storageService, this.eventService, this.tokenSecret, authenticate, this.http)
+                try {
+                  const provider = this.createTokenAuthProviderFromAuthenticate(authenticate);
+                  return this.setAuthProvider(provider)
+                } catch (error: any) {
+                  this.error = new Error("Header 'www-authenticate' could not be parsed.")
+                  return this.setAuthProvider(null)
+                }
               }
-              return of(this.authProvider)
+              //no authenticate header
+              this.error = new Error("Unsupported Authenticate: '" + authenticate + "'")
+              return this.setAuthProvider(null)
             }
-            console.error("Expected header 'www-authenticate' does not exists. Check CORS settings.");
-            return of(this.authProvider)
+            this.error = new Error("Expected header 'www-authenticate' does not exists. Check CORS settings.")
+            return this.setAuthProvider(null)
           }
-          console.error("Unexpected Error: ",err)
-          return of(this.authProvider) //should be null
+          if (error.status == 0) {
+            console.log(error)
+            this.error = new Error("Host seems to be down. Check CORS settings.")
+            return this.setAuthProvider(null)
+          }
+
+          //any other unexpected error
+          this.error = error
+          return this.setAuthProvider(null)
         })
       )
+  }
+
+  private createTokenAuthProviderFromAuthenticate(authenticate: string): TokenAuthProvider {
+    const cleanedAuthenticate = authenticate.replace("Bearer ", "").replaceAll('"', "").replaceAll(" ", "");
+    const parsedAuthenticate = JSON.parse('{"' + cleanedAuthenticate.replaceAll(",", '", "').replaceAll("=", '": "') + '"}')
+    const server = parsedAuthenticate.realm;
+    const clientId = parsedAuthenticate.service;
+    return new TokenAuthProvider(this.router, this.storageService, this.eventService, this.tokenSecret, server, clientId, this.http)
+  }
+
+  private setAuthProvider(authProvider: AuthProvider | null): Observable<AuthProvider | null> {
+    this.authProvider = authProvider
+    return of(this.authProvider)
   }
 
 }

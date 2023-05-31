@@ -10,22 +10,12 @@ import { EventService } from "src/app/shared/services/event.service";
 
 export class BasicAuthProvider extends AbstractAuthProvider {
 
-    realm: string;
-
-    constructor(router: Router, storageService: StorageService, eventService: EventService, tokenSecret: string, wwwAuthenticate: string, private http: HttpClient, private server: string) {
+    constructor(router: Router, storageService: StorageService, eventService: EventService, tokenSecret: string, private http: HttpClient, private server: string) {
         super(router, storageService, eventService, tokenSecret)
-        this.realm = this.parseAuthenticate(wwwAuthenticate).realm;
     }
 
     override getType(): Type {
         return Type.BASIC
-    }
-
-    private parseAuthenticate(authenticate: string): any {
-        //token auth: Basic realm="any string"
-        authenticate = authenticate.replace("Basic ", "").replaceAll('"', "").replaceAll(" ", "");
-        var authenticate = '{"' + authenticate.replaceAll(",", '", "').replaceAll("=", '": "') + '"}';
-        return JSON.parse(authenticate)
     }
 
     protected doLogin(username: string, password: string): Observable<Token> {

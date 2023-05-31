@@ -17,8 +17,6 @@ function initializeAuthProvider(authProviderService: AuthProviderService): () =>
       tap(provider => {
         if (provider) {
           console.debug("AuthProvider Type: " + Type[provider.getType()])
-        } else {
-          console.error("Error while retrieving AuthProvider")
         }
       })
     )

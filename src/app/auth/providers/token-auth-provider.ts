@@ -1,12 +1,12 @@
 import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { Router } from "@angular/router";
-import { Observable, map, of, throwError } from "rxjs";
+import { Observable, map, of } from "rxjs";
+import { EventService } from "src/app/shared/services/event.service";
 import { StorageService } from "src/app/shared/services/storage.service";
 import { Scope } from "../models/scope";
 import { Token } from "../models/token";
 import { AbstractAuthProvider } from "./abstract-auth-provider";
 import { Type } from "./auth-provider";
-import { EventService } from "src/app/shared/services/event.service";
 
 
 export class TokenAuthProvider extends AbstractAuthProvider {
@@ -14,22 +14,14 @@ export class TokenAuthProvider extends AbstractAuthProvider {
     private server: string;
     private clientId: string;
 
-    constructor(router: Router, storageService: StorageService, eventService: EventService, tokenSecret: string, wwwAuthenticate: string, private http: HttpClient) {
-        super(router, storageService, eventService, tokenSecret)
-        const parsedToken = this.parseToken(wwwAuthenticate);
-        this.server = parsedToken.realm;
-        this.clientId = parsedToken.service;
+    constructor(router: Router, storageService: StorageService, eventService: EventService, tokenSecret: string, server: string, clientId: string, private http: HttpClient) {
+        super(router, storageService, eventService, tokenSecret);
+        this.server=server;
+        this.clientId=clientId;
     }
 
     override getType(): Type {
         return Type.TOKEN
-    }
-
-    private parseToken(authenticate: string): any {
-        //token auth: Bearer realm="http://auth.com",service="myService"
-        authenticate = authenticate.replace("Bearer ", "").replaceAll('"', "").replaceAll(" ", "");
-        var authenticate = '{"' + authenticate.replaceAll(",", '", "').replaceAll("=", '": "') + '"}';
-        return JSON.parse(authenticate)
     }
 
     protected doLogin(username: string, password: string): Observable<Token> {

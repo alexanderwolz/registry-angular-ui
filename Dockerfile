@@ -20,8 +20,9 @@ LABEL maintainer="mail@alexanderwolz.de"
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /app/dist/out/ /usr/share/nginx/html
 
-#added for env variables
-ENV API_HOST=/api
+ENV REGISTRY_HOST=http://localhost:5000
+ENV TOKEN_SECRET=PleaseReplaceMeAsSoonAsPossible
+
 RUN echo "mainFileName=\"\$(ls /usr/share/nginx/html/main*.js)\" && \
           envsubst '\${REGISTRY_HOST} \${TOKEN_SECRET}' < \${mainFileName} > main.tmp && \
           mv main.tmp  \${mainFileName} && nginx -g 'daemon off;'" > run.sh

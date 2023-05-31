@@ -12,7 +12,11 @@
             <hr class="my-4">
 
             <div>
-                <div>
+                <div *ngIf="totalRepositoryCount===0">
+                    Registry <span class="lead">{{registry}}</span> seems to be empty , so take the chance to push some
+                    images 🥳
+                </div>
+                <div *ngIf="totalRepositoryCount>0">
                     There {{totalRepositoryCount==1 ? 'is' : 'are'}} <span class="lead">{{totalRepositoryCount}}
                         repositories</span> at registry <span class="lead">{{registry}}</span> in total.
                 </div>

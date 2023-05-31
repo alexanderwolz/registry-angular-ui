@@ -25,7 +25,7 @@ export class LoginComponent {
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    authProviderService: AuthProviderService
+    private authProviderService: AuthProviderService
   ) {
     this.authProvider = authProviderService.getAuthProvider()
   }
@@ -40,7 +40,7 @@ export class LoginComponent {
   ngOnInit() {
     if (this.authProvider === null) {
       this.loginForm.disable()
-      let message = "No authentication provider could be retrieved - try page refresh."
+      let message = this.authProviderService.getError()?.message || "No authentication provider could be retrieved - try page refresh."
       this.errorMessage = message
       return
     }
@@ -59,8 +59,6 @@ export class LoginComponent {
       || (this.authProvider instanceof EmptyAuthProvider && this.authProvider.isAuthenticated());
   }
 
-  //Add user form actions
-
   get form(): { [key: string]: AbstractControl<any> } {
     return this.loginForm.controls;
   }
@@ -78,7 +76,6 @@ export class LoginComponent {
       .subscribe({
         next: () => {
           this.router.navigate([this.redirect || "/"]);
-          //this.router.navigateByUrl(this.redirect || "/");
         },
         error: (error) => {
           let errorMessage = error.message
@@ -91,7 +88,6 @@ export class LoginComponent {
               }
             });
           }
-          //this.eventService.emit(new ErrorEvent(errorMessage, null))
           this.errorMessage = errorMessage
           this.loading = false;
         }
