@@ -44,11 +44,11 @@
             <app-title-box *ngIf="repositories.size == 0" title="This registry does not contain any repositories yet!">
             </app-title-box>
 
-            <app-title-box *ngIf="repositories.size > 0 && repositories.get(currentNamespace)?.length == 0"
+            <app-title-box *ngIf="repositories.size > 0 && selectedRepositories.length == 0"
                 title="Namespace '{{currentNamespace}}' does not contain any repositories yet!">
             </app-title-box>
 
-            <div *ngFor="let repository of repositories.get(currentNamespace)">
+            <div *ngFor="let repository of selectedRepositories">
                 <app-link-box [routerLink]="'/repositories/' + repository.getRelativePath()">
                     <app-title [segments]="repository.allNamespaces" [title]="repository.name"> </app-title>
                 </app-link-box>

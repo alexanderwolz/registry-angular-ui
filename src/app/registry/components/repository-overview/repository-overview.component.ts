@@ -14,6 +14,7 @@ import { Repository } from '../../../registry-core/models/repository';
 export class RepositoryOverviewComponent {
 
   repositories: Map<string, Array<Repository>> = new Map();
+  selectedRepositories: Array<Repository> = []
 
   otherNamespaces: Array<string> = [];
 
@@ -39,6 +40,7 @@ export class RepositoryOverviewComponent {
 
   setNamespace(namespace: string | null) {
     this.currentNamespace = namespace || this.userNamespace
+    this.selectedRepositories = this.repositories.get(this.currentNamespace) || []
   }
 
   refresh() {

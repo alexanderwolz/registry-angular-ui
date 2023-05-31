@@ -11,15 +11,9 @@
 
 ## 🧑‍💻 About
 
-Simple Angular web application for managing Docker Registry V2.
+Simple Angular- and Bootstrap-based web application for Docker Registry V2 with auth- and data cache.
 
-## 🛠️ Build
-### Using prebuild image from Docker Hub
-- Download image: ```docker pull alexanderwolz/registry-angular-ui:latest```
-### Build yourself
-- ```docker build -t registry-angular-ui:latest .```
-
-## 🎥 Preview
+## 🖥️ Preview
 ![Preview](documentation/preview.gif)
 
 ## 🔬 Basic Concept
@@ -30,6 +24,12 @@ Simple Angular web application for managing Docker Registry V2.
 - minimizes HTTP traffic as much as possible
 
 - See also [keycloak-docker-group-role-mapper](https://github.com/alexanderwolz/keycloak-docker-group-role-mapper) for authentication mapping.
+
+## 🛠️ Build
+### Using prebuild image from Docker Hub
+- Download image: ```docker pull alexanderwolz/registry-angular-ui:latest```
+### Build yourself
+- ```docker build -t registry-angular-ui:latest .```
 
 ## ⚙️ Configuration
 This web application supports the following environment variables:
