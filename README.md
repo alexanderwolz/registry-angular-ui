@@ -19,7 +19,7 @@ Simple Angular web application for managing Docker Registry V2.
 ### Build yourself
 - ```docker build -t registry-angular-ui:latest .```
 
-## 👾 Preview
+## 🎥 Preview
 ![Preview](documentation/preview.gif)
 
 ## 🔬 Basic Concept
@@ -43,6 +43,11 @@ This web application supports the following environment variables:
 
 - [registry-local](examples/registry-local): local registry setup
 - [registry-proxy](examples/registry-proxy): using existing registry with reverse proxy (CORS)
+
+## ✨ Credits
+
+Thanks to [Joxit](https://github.com/Joxit/docker-registry-ui) and [Docker Hub](https://hub.docker.com) for the inspiration.
+
 
 - - -
 
