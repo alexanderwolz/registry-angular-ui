@@ -3,11 +3,11 @@ services:
 
   remote_proxy:
     container_name: remote_proxy
-    image: nginx:1.24.0
+    image: nginx:1.25.0-alpine3.17-slim
     restart: unless-stopped
     command: /bin/bash -c "envsubst '$$REMOTE_REGISTRY' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
     ports:
-      - "8000:80"
+      - "8000:8080"
     environment:
       REMOTE_REGISTRY: ${REMOTE_REGISTRY}
     volumes:
@@ -19,7 +19,7 @@ services:
     image: alexanderwolz/registry-angular-ui:latest
     restart: unless-stopped
     ports:
-      - "8080:80"
+      - "8080:8080"
     environment:
       REGISTRY_HOST: http://localhost:8000
       TOKEN_SECRET: myfancysupersecureappsecret
