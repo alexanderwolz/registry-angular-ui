@@ -14,16 +14,33 @@ RUN echo RELEASE_$(grep '"version":' package.json | cut -d\" -f4)_$(date -u +%Y-
 
 
 # Stage 3 - run
-FROM nginx:1.21.1-alpine as run
+FROM nginx:1.25.0-alpine3.17-slim as run
 LABEL maintainer="mail@alexanderwolz.de"
-
-COPY nginx.conf /etc/nginx/nginx.conf
-COPY --from=build /app/dist/out/ /usr/share/nginx/html
 
 ENV REGISTRY_HOST=http://localhost:5000
 ENV TOKEN_SECRET=PleaseReplaceMeAsSoonAsPossible
 
-RUN echo "mainFileName=\"\$(ls /usr/share/nginx/html/main*.js)\" && \
-          envsubst '\${REGISTRY_HOST} \${TOKEN_SECRET}' < \${mainFileName} > main.tmp && \
-          mv main.tmp  \${mainFileName} && nginx -g 'daemon off;'" > run.sh
-CMD [ "sh", "run.sh" ]
+RUN apk update && apk add bash
+
+COPY --chown=nginx:nginx nginx.conf /etc/nginx/nginx.conf
+COPY --from=build /app/dist/out/ /usr/share/nginx/html
+
+RUN chown -R nginx:nginx /usr/share/nginx \
+    && chown -R nginx:nginx /var/cache/nginx \
+    && chown -R nginx:nginx /var/log/nginx \
+    && chown -R nginx:nginx /etc/nginx/conf.d \
+    && touch /var/run/nginx.pid \
+    && chown -R nginx:nginx /var/run/nginx.pid
+
+WORKDIR /usr/share/nginx
+
+USER nginx
+
+RUN echo "mainFileName=\"\$(ls html/main*.js)\" \
+    && envsubst '\${REGISTRY_HOST} \${TOKEN_SECRET}' < \${mainFileName} > main.tmp \
+    && mv main.tmp  \${mainFileName} \
+    && nginx -g 'daemon off;'" > run.sh
+
+EXPOSE 8080
+
+CMD [ "bash", "run.sh" ]
