@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { NgbPopoverModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthModule } from '../auth/auth.module';
 import { RegistryCoreModule } from '../registry-core/registry-core.module';
@@ -10,7 +11,6 @@ import { RepositoryOverviewComponent } from './components/repository-overview/re
 import { TagDetailComponent } from './components/tag-detail/tag-detail.component';
 import { TagOverviewComponent } from './components/tag-overview/tag-overview.component';
 import { RegistryRoutingModule } from './registry-routing.module';
-import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -28,7 +28,7 @@ import { FormsModule } from '@angular/forms';
     NgbTooltipModule,
     RegistryRoutingModule,
     RegistryCoreModule,
-    SharedModule
+    SharedModule,
   ]
 })
 export class RegistryModule { }

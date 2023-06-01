@@ -19,6 +19,7 @@ LABEL maintainer="mail@alexanderwolz.de"
 
 ENV REGISTRY_HOST=http://localhost:5000
 ENV TOKEN_SECRET=PleaseReplaceMeAsSoonAsPossible
+ENV CHECK_PULL_ACCESS=false
 
 RUN apk update && apk add bash
 
@@ -37,7 +38,7 @@ WORKDIR /usr/share/nginx
 USER nginx
 
 RUN echo "mainFileName=\"\$(ls html/main*.js)\" \
-    && envsubst '\${REGISTRY_HOST} \${TOKEN_SECRET}' < \${mainFileName} > main.tmp \
+    && envsubst '\${REGISTRY_HOST} \${TOKEN_SECRET} \${CHECK_PULL_ACCESS}' < \${mainFileName} > main.tmp \
     && mv main.tmp  \${mainFileName} \
     && nginx -g 'daemon off;'" > run.sh
 

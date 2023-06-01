@@ -43,6 +43,10 @@ function initializeAuthProvider(authProviderService: AuthProviderService): () =>
       useValue: environment.tokenSecret
     },
     {
+      provide: 'CHECK_PULL_ACCESS',
+      useValue: environment.checkPullAccess
+    },
+    {
       provide: APP_INITIALIZER,
       useFactory: initializeAuthProvider,
       deps: [AuthProviderService],

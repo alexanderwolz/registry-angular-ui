@@ -34,6 +34,8 @@ export class BasicAuthProvider extends AbstractAuthProvider {
     }
 
     override doGetAuthorizationFor(token: Token, scope: Scope): Observable<string> {
+        //TODO check result if it matches scope (user management)
+        //return this.authenticate(token.base64Credentials, scope.toString).pipe(map(response => TODO))
         return of("Basic " + token.base64Credentials)
     }
 }

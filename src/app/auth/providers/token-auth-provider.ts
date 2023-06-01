@@ -14,10 +14,12 @@ export class TokenAuthProvider extends AbstractAuthProvider {
     private server: string;
     private clientId: string;
 
+    private tokenCache = new Map<string, string>()
+
     constructor(router: Router, storageService: StorageService, eventService: EventService, tokenSecret: string, server: string, clientId: string, private http: HttpClient) {
         super(router, storageService, eventService, tokenSecret);
-        this.server=server;
-        this.clientId=clientId;
+        this.server = server;
+        this.clientId = clientId;
     }
 
     override getType(): Type {
@@ -29,6 +31,11 @@ export class TokenAuthProvider extends AbstractAuthProvider {
         return this.authenticate(base64Credentials).pipe(
             map(() => new Token(username, base64Credentials))
         )
+    }
+
+    override logout(): void {
+        super.logout();
+        this.tokenCache.clear();
     }
 
     private authenticate(base64Credentials: string, scope?: Scope): Observable<any> {
@@ -48,8 +55,6 @@ export class TokenAuthProvider extends AbstractAuthProvider {
         }
         return params;
     }
-
-    private tokenCache = new Map<string, string>()
 
     override doGetAuthorizationFor(token: Token, scope: Scope): Observable<string> {
 

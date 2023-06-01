@@ -9,7 +9,12 @@ function push {
     local NAMESPACE=$2
     local NAME=$3
     local TAG=$4
-    local REPO="$REGISTRY/$NAMESPACE/$NAME:$TAG"
+
+    if [ -z $NAMESPACE ];then
+        local REPO="$REGISTRY/$NAME:$TAG"
+    else
+        local REPO="$REGISTRY/$NAMESPACE/$NAME:$TAG"
+    fi
 
     docker pull $1 > /dev/null
     docker tag $1 $REPO > /dev/null
@@ -41,7 +46,13 @@ push alpine:3.18.0 john alpine-custom 1.2.0
 push nginx:1.24.0 john nginx 1.25.0-PRE
 push registry:2.8.2 john registry 2.8.2
 
+push alpine:3.17.0 jeffrey alpine-custom 1.1.0
+push alpine:3.18.0 jeffrey alpine-custom 1.2.0
+
 push registry:2.8.1 example.com registry 2.8.1-custom
 push alpine:3.15.0 example.com/project1 alpine-basic-image 3.15.0
+
+push registry:2.8.1 "" registry 2.8.1-custom
+push alpine:3.15.0 "" alpine-basic-image 3.15.0
 
 

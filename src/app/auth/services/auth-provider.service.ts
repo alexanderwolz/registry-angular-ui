@@ -75,7 +75,6 @@ export class AuthProviderService {
             return this.setAuthProvider(null)
           }
           if (error.status == 0) {
-            console.log(error)
             this.error = new Error("Host seems to be down. Check CORS settings.")
             return this.setAuthProvider(null)
           }
