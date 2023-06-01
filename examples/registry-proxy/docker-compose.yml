@@ -5,7 +5,7 @@ services:
     container_name: remote_proxy
     image: nginx:1.25.0-alpine3.17-slim
     restart: unless-stopped
-    command: /bin/bash -c "envsubst '$$REMOTE_REGISTRY' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+    command: /bin/sh -c "envsubst '$$REMOTE_REGISTRY' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
     ports:
       - "8000:8080"
     environment:

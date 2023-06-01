@@ -1,4 +1,7 @@
 import { Injectable } from '@angular/core';
+import { ArrayCache } from '../models/array-cache';
+import { Cache } from '../models/cache';
+import { MapCache } from '../models/map-cache';
 
 @Injectable({
   providedIn: 'root'
@@ -7,6 +10,8 @@ export class StorageService {
 
   private localStorage = window.localStorage
   private sessionStorage = window.sessionStorage
+
+  private caches = new Map<string, Cache>()
 
   constructor() { }
 
@@ -38,6 +43,31 @@ export class StorageService {
 
   existsInLocalStorage(key: string): boolean {
     return this.localStorage.getItem(key) != null
+  }
+
+  clearCaches() {
+    this.caches.forEach((cache: Cache, key:string) => {
+      console.log("Clearing cache: "+key)
+      cache.clear();
+    });
+  }
+
+  getMapCache<K, V>(key: string): MapCache<K, V> {
+    let cache = this.caches.get(key);
+    if (!cache) {
+      cache = new MapCache<K, V>()
+      this.caches.set(key, cache);
+    }
+    return cache as MapCache<K, V>;
+  }
+
+  getArrayCache<V>(key: string): ArrayCache<V> {
+    let cache = this.caches.get(key);
+    if (!cache) {
+      cache = new ArrayCache<V>()
+      this.caches.set(key, cache);
+    }
+    return cache as ArrayCache<V>;
   }
 
 }

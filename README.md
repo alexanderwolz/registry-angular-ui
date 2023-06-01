@@ -34,10 +34,11 @@ Simple Angular- and Bootstrap-based web application for Docker Registry V2 with 
 ## ⚙️ Configuration
 This web application supports the following environment variables:
 
-| Variable Name                   | Description                                              |
-|---------------------------------|----------------------------------------------------------|
-|```REGISTRY_HOST```              | URL of the registry to connect to with scheme http/https |
-|```TOKEN_SECRET```               | Secret used for encrypting the base64 credentials        |
+| Variable Name                   | Description                                                                     |
+|---------------------------------|---------------------------------------------------------------------------------|
+|```REGISTRY_HOST```              | URL of the registry to connect to with scheme http/https                        |
+|```TOKEN_SECRET```               | Secret used for encrypting the base64 credentials                               |
+|```CHECK_PULL_ACCESS```          | If set to ```true```, each repository is being checked for pull permissions     |
 
 ## 🔍 Examples
 

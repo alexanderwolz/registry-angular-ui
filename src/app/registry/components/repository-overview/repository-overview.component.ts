@@ -1,9 +1,8 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthProviderService } from 'src/app/auth/services/auth-provider.service';
 import { RegistryService } from 'src/app/registry-core/services/registry.service';
-import { Pagination } from '../../../registry-core/models/pagination';
 import { Repository } from '../../../registry-core/models/repository';
 
 @Component({
@@ -26,6 +25,7 @@ export class RepositoryOverviewComponent {
   errorMessage: string | null = null
 
   constructor(
+    private router: Router,
     private activatedRoute: ActivatedRoute,
     private registryService: RegistryService,
     authProviderService: AuthProviderService) {
@@ -34,32 +34,24 @@ export class RepositoryOverviewComponent {
   }
 
   ngOnInit() {
-    this.setNamespace(this.activatedRoute.snapshot.queryParams['namespace']);
+    this.setNamespace(this.activatedRoute.snapshot.queryParams['namespace'])
+    this.router.navigate([], { relativeTo: this.activatedRoute }); //remove query param
     this.refresh();
   }
 
-  setNamespace(namespace: string | null) {
+  setNamespace(namespace: string) {
     this.currentNamespace = namespace || this.userNamespace
     this.selectedRepositories = this.repositories.get(this.currentNamespace) || []
   }
 
-  refresh() {
+  private refresh() {
     this.loading = true
-    this.registryService.getRepositories(new Pagination(100), false)
+    this.registryService.getAllRepositoriesMappedByNamespace()
       .subscribe({
         next: (repositories) => {
-          const namespaces = new Array()
-          for (const key of repositories.keys()) {
-            if (key !== this.userNamespace) {
-              namespaces.push(key)
-            }
-          }
-          namespaces.sort();
-          this.otherNamespaces = namespaces
+          this.otherNamespaces = Array.from(repositories.keys()).filter(ns => ns !== this.userNamespace).sort()
           this.repositories = repositories
-          if (!repositories.has(this.currentNamespace)) {
-            this.setNamespace(this.userNamespace)
-          }
+          this.setNamespace(this.currentNamespace)
           this.loading = false
         },
         error: (error) => {

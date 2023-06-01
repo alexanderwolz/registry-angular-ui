@@ -12,57 +12,42 @@ import { Image } from '../models/image';
 import { Pagination } from '../models/pagination';
 import { Repository } from '../models/repository';
 import { Tag } from '../models/tag';
+import { StorageService } from 'src/app/shared/services/storage.service';
 
-//see also https://docs.docker.com/registry/spec/api/
-//this service tries to wrap this API
-
+const KEY_TAG_NAMES = "TAG_NAMES"
+const KEY_TAGS = "TAGS"
+const KEY_REPO_NAMES = "REPO_NAMES"
+const KEY_REPOS = "REPOS"
 
 @Injectable({
   providedIn: 'root'
 })
+//see also https://docs.docker.com/registry/spec/api/
+//this service tries to wrap this API
 export class RegistryService {
 
-  //TODO find a way to cache paginated repos
-  private allRepositoryNames: Array<string> | null = null;
-
-  private allTagNames = new Map<string, Array<string>>();
-  private tags = new Map<string, Tag>();
+  private allTagNames = this.storageService.getMapCache<string, Array<string>>(KEY_TAG_NAMES)
+  private tags = this.storageService.getMapCache<string, Tag>(KEY_TAGS)
+  private allRepositoryNames = this.storageService.getArrayCache<string>(KEY_REPO_NAMES)
+  private repositories = this.storageService.getArrayCache<Repository>(KEY_REPOS)
 
   readonly registry: string;
 
   constructor(
     private http: HttpClient,
     private authProviderService: AuthProviderService,
-    @Inject('REGISTRY_HOST') private registryHost: string) {
+    private storageService: StorageService,
+    @Inject('REGISTRY_HOST') private registryHost: string,
+    @Inject('CHECK_PULL_ACCESS') private checkPullAccess: boolean) {
     this.registry = registryHost.replace("http://", "").replaceAll("https://", "")
   }
 
-  getAllRepositoryNames(): Observable<Array<string>> {
-    if (this.allRepositoryNames) {
-      return of(this.allRepositoryNames)
-    }
-    return this.loadRepositoryNames().pipe(tap(names => this.allRepositoryNames = names))
+  getTotalRepositoryCount(): Observable<number> {
+    return this.getAllRepositoryNames().pipe(map(repositoryNames => repositoryNames.length))
   }
 
-  getRepositories(pagination?: Pagination, checkPullAccess?: boolean): Observable<Map<string, Array<Repository>>> {
-    return this.loadRepositoryNames(pagination)
-      .pipe(
-        map(repositoryNames => this.converToRepositories(repositoryNames))
-      )
-      .pipe(
-        mergeMap(repositories => {
-          if (checkPullAccess) {
-            forkJoin(
-              repositories.map(repository => this.isPrivilegedRepository(repository)
-                .pipe(map(isPrivielged => isPrivielged ? repository : null)))
-            )
-          }
-          return of(repositories)
-        })
-      )
-      .pipe(map(resultArray => resultArray.filter(repository => !!repository)))
-      .pipe(map(repositories => this.createNamespaceMap(repositories))
-      );
+  getAllRepositoriesMappedByNamespace(): Observable<Map<string, Array<Repository>>> {
+    return this.getAllRepositories().pipe(map(repositories => this.createNamespaceMap(repositories)));
   }
 
   loadTags(repository: Repository, pagination?: Pagination): Observable<Array<any>> {
@@ -86,6 +71,13 @@ export class RegistryService {
       return of(tagNames)
     }
     return this.loadTagNames(repository).pipe(tap(tagNames => this.allTagNames.set(key, tagNames)))
+  }
+
+  getAllRepositoryNames(): Observable<Array<string>> {
+    if (this.allRepositoryNames.values.length > 0) {
+      return of(this.allRepositoryNames.values)
+    }
+    return this.loadRepositoryNames().pipe(tap(names => this.allRepositoryNames.set(names)))
   }
 
   loadTagNames(repository: Repository, pagination?: Pagination): Observable<Array<string>> {
@@ -146,11 +138,32 @@ export class RegistryService {
 
   /** private methods **/
 
+  private getAllRepositories(): Observable<Array<Repository>> {
+    if (this.repositories.values.length > 0) {
+      return of(this.repositories.values)
+    }
+    return this.getAllRepositoryNames()
+      .pipe(map(repositoryNames => this.converToRepositories(repositoryNames)))
+      .pipe(mergeMap(repositories => this.filterRepositories(repositories)))
+      .pipe(tap(repositories => this.repositories.set(repositories)))
+  }
+
   private converToRepositories(repositoryNames: Array<string>): Array<Repository> {
     if (!repositoryNames) {
       return [];
     }
     return repositoryNames.map((repositoryName: string) => Repository.fromString(this.registry, repositoryName))
+  }
+
+  private filterRepositories(repositories: Array<Repository>): Observable<Array<Repository>> {
+    if (this.checkPullAccess) {
+      return forkJoin(
+        repositories.map(repository =>
+          this.checkCanPullRepository(repository).pipe(map(isPrivielged => isPrivielged ? repository : null))
+        )
+      ).pipe(map(repositories => repositories.filter(repository => !!repository) as Array<Repository>))
+    }
+    return of(repositories)
   }
 
   private loadManifests(repository: Repository, tag: string): Observable<ManifestContainer> {
@@ -289,15 +302,11 @@ export class RegistryService {
       );
   }
 
-  private isPrivilegedRepository(repository: Repository): Observable<boolean> {
+  private checkCanPullRepository(repository: Repository): Observable<boolean> {
     return this.createAuthorizationHeader(new Scope("repository", repository.getRelativePath(), ["pull"]))
       .pipe(
-        map(() => {
-          return true
-        }),
-        catchError((() => {
-          return of(false)
-        }))
+        map(() => true),
+        catchError(() => of(false))
       );
   }
 

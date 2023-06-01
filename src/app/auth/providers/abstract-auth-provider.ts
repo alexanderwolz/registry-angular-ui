@@ -45,7 +45,8 @@ export abstract class AbstractAuthProvider implements AuthProvider {
     }
 
     logout() {
-        this.storageService.clearObjectInLocalStorage(KEY_AUTH)
+        this.storageService.clearObjectInLocalStorage(KEY_AUTH);
+        this.storageService.clearCaches();
         this.router.navigate(['/login']);
     }
 
