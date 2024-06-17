@@ -54,4 +54,4 @@ Thanks to [Joxit](https://github.com/Joxit/docker-registry-ui) and [Docker Hub](
 
 Made with ❤️ in Bavaria
 <br>
-© 2023, <a href="https://www.alexanderwolz.de"> Alexander Wolz
+© 2024, <a href="https://www.alexanderwolz.de"> Alexander Wolz

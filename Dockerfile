@@ -14,7 +14,7 @@ RUN echo RELEASE_$(grep '"version":' package.json | cut -d\" -f4)_$(date -u +%Y-
 
 
 # Stage 3 - run
-FROM nginx:1.25.0-alpine3.17-slim as run
+FROM nginx:1.27.0-alpine-slim as run
 LABEL maintainer="mail@alexanderwolz.de"
 
 ENV REGISTRY_HOST=http://localhost:5000
@@ -41,7 +41,5 @@ RUN echo "mainFileName=\"\$(ls html/main*.js)\" \
     && envsubst '\${REGISTRY_HOST} \${TOKEN_SECRET} \${CHECK_PULL_ACCESS}' < \${mainFileName} > main.tmp \
     && mv main.tmp  \${mainFileName} \
     && nginx -g 'daemon off;'" > run.sh
-
-EXPOSE 8080
 
 CMD [ "bash", "run.sh" ]
