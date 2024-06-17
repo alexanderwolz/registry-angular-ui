@@ -1,3 +1,4 @@
+import { RegistryUtils } from "../utils/registry-utils";
 import { Platform } from "./docker/platform";
 import { Image } from "./image";
 import { Repository } from "./repository";
@@ -40,13 +41,7 @@ export class Tag {
     }
 
     getType(): string {
-        if (this.mediaType == Image.MEDIA_TYPE_IMAGE_SINGLE) {
-            return Image.TYPE_IMAGE;
-        }
-        if (this.mediaType == Image.MEDIA_TYPE_IMAGE_LIST) {
-            return Image.TYPE_IMAGE;
-        }
-        return Image.TYPE_UNKNOWN;
+        return RegistryUtils.getType(this.mediaType)
     }
 
     getPullCommand() {
