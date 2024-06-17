@@ -5,4 +5,5 @@ export interface ManifestReference {
     digest: string
     size: number
     platform: Platform
+    annotations: any
 }

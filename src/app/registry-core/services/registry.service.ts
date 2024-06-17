@@ -13,6 +13,7 @@ import { Pagination } from '../models/pagination';
 import { Repository } from '../models/repository';
 import { Tag } from '../models/tag';
 import { StorageService } from 'src/app/shared/services/storage.service';
+import { RegistryUtils } from '../utils/registry-utils';
 
 const KEY_TAG_NAMES = "TAG_NAMES"
 const KEY_TAGS = "TAGS"
@@ -100,12 +101,11 @@ export class RegistryService {
     return this.loadManifests(repository, tagName)
       .pipe(
         mergeMap(container => {
+          //console.log("loadTag", container)
           return forkJoin(
             container.manifests.map(
               manifest => this.loadConfiguration(repository, manifest.config.digest)
-                .pipe(
-                  map(config => new Image(manifest, config))
-                )
+                .pipe(map(config => new Image(manifest, config)))
             )
           ).pipe(map(images => new Tag(container.digest, container.mediaType, repository, tagName, images)))
         })
@@ -171,19 +171,21 @@ export class RegistryService {
     const scope = new Scope("repository", repository.getRelativePath(), ["pull"])
     //we have to differ between these two content types
     //see https://docs.docker.com/registry/spec/api/
-    const manifest = "application/vnd.docker.distribution.manifest.v2+json"
-    const manifestList = "application/vnd.docker.distribution.manifest.list.v2+json"
-    const headers = new HttpHeaders({ "Accept": manifest + "," + manifestList })
+    const headers = RegistryUtils.getAllManifestsAcceptHeader()
     return this.get(endpoint, scope, headers, undefined)
       .pipe(
         mergeMap((response: HttpResponse<any>) => {
           const digest = response.headers.get('docker-content-digest') || response.headers.get('etag')
           //TODO docker-content-digest, ETag headers for delete
+
+          //console.log("loadManifest",response.body)
+          
+          //Docker Images
           const contentType = response.headers.get("content-type")
-          if (contentType === manifest) {
+          if (contentType === RegistryUtils.MEDIA_DOCKER_MANIFEST) {
             return of(new ManifestContainer(digest!, contentType, [response.body as Manifest]))
           }
-          if (contentType === manifestList) {
+          if (contentType === RegistryUtils.MEDIA_DOCKER_MANIFEST_LIST) {
             const manifestList = response.body as ManifestList
             return forkJoin(
               manifestList.manifests.map(
@@ -193,6 +195,25 @@ export class RegistryService {
               map(manifests => new ManifestContainer(digest!, contentType, manifests))
             )
           }
+
+          //OCI Images
+          if (contentType === RegistryUtils.MEDIA_OCI_MANIFEST) {
+            return of(new ManifestContainer(digest!, contentType, [response.body as Manifest]))
+          }
+          if (contentType === RegistryUtils.MEDIA_OCI_INDEX) {
+            const manifestList = response.body as ManifestList
+            return forkJoin(
+              manifestList.manifests
+              .filter(reference => reference.annotations === undefined) //remove those with annotations (see OCI image)
+              .map(
+                reference => this.loadSingleManifestFromDigest(repository, reference.digest)
+              )
+            ).pipe(
+              map(manifests => new ManifestContainer(digest!, contentType, manifests))
+            )
+          }
+
+          //anything else
           return throwError(() => new Error("Unsupported content type: '" + contentType + "'"))
         })
       )
@@ -222,7 +243,7 @@ export class RegistryService {
   private loadSingleManifestFromDigest(repository: Repository, digest: string): Observable<Manifest> {
     const endpoint = repository.getRelativePath() + "/manifests/" + digest
     const scope = new Scope("repository", repository.getRelativePath(), ["pull"])
-    const headers = new HttpHeaders({ "Accept": "application/vnd.docker.distribution.manifest.v2+json" })
+    const headers = RegistryUtils.getManifestAcceptHeader()
     return this.get(endpoint, scope, headers, undefined)
       .pipe(
         map((response: HttpResponse<any>) => {

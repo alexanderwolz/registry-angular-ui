@@ -1,14 +1,10 @@
+import { RegistryUtils } from "../utils/registry-utils";
 import { Configuration } from "./docker/configuration";
 import { Manifest } from "./docker/manifest";
 import { Platform } from "./docker/platform";
 import { Layer } from "./layer";
 
 export class Image {
-
-    static readonly MEDIA_TYPE_IMAGE_SINGLE = "application/vnd.docker.distribution.manifest.v2+json"
-    static readonly MEDIA_TYPE_IMAGE_LIST = "application/vnd.docker.distribution.manifest.list.v2+json"
-    static readonly TYPE_IMAGE = "Image"
-    static readonly TYPE_UNKNOWN = "Unknown"
 
     readonly digest: string
     readonly digestShort: string
@@ -65,13 +61,7 @@ export class Image {
     }
 
     getType(): string {
-        if (this.manifest.mediaType == Image.MEDIA_TYPE_IMAGE_SINGLE) {
-            return Image.TYPE_IMAGE;
-        }
-        if (this.manifest.mediaType == Image.MEDIA_TYPE_IMAGE_LIST) {
-            return Image.TYPE_IMAGE;
-        }
-        return Image.TYPE_UNKNOWN;
+        return RegistryUtils.getType(this.manifest.mediaType)
     }
 
 }
