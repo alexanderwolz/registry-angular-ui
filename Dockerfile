@@ -31,7 +31,7 @@ ENV CHECK_PULL_ACCESS=false
 
 RUN apk upgrade --no-cache
 
-COPY --chown=nginx:nginx nginx.conf /etc/nginx/nginx.conf
+COPY --chown=nginx:nginx nginx.conf security-headers.conf /etc/nginx/
 COPY --chown=nginx:nginx --from=build /app/dist/registry-fronted/ /usr/share/nginx/html
 
 RUN chown nginx:nginx /usr/share/nginx /usr/share/nginx/html \
