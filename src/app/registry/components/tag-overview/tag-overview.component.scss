@@ -1,7 +1,7 @@
-@import "variables";
+@use 'variables' as *;
 
 .select-all {
-    color: $blue;
-    font-weight: 200;
-    margin-right: 1em;
+  color: $blue;
+  font-weight: 200;
+  margin-right: 1em;
 }

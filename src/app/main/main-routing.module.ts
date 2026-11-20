@@ -7,16 +7,14 @@ import { HomeComponent } from './components/home/home.component';
 const routes: Routes = [
   {
     path: '',
-    children: [
-      { path: '', component: HomeComponent, data: { title: "home" } },
-    ],
+    children: [{ path: '', component: HomeComponent, data: { title: 'home' } }],
     component: IndexComponent,
-    canActivate: [authGuard]
-  }
+    canActivate: [authGuard],
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class MainRoutingModule { }
+export class MainRoutingModule {}

@@ -1,3 +1,3 @@
 export interface Cache {
-    clear(): void;
+  clear(): void;
 }

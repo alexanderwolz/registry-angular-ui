@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Repository } from 'src/app/registry-core/models/repository';
 import { Tag } from 'src/app/registry-core/models/tag';
@@ -9,24 +9,25 @@ import { Layer } from 'src/app/registry-core/models/layer';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
+  standalone: false,
   selector: 'app-image-detail',
   templateUrl: './image-detail.component.html',
-  styleUrls: ['./image-detail.component.scss']
+  changeDetection: ChangeDetectionStrategy.Eager,
+  styleUrls: ['./image-detail.component.scss'],
 })
-export class ImageDetailComponent {
+export class ImageDetailComponent implements OnInit {
+  repository: Repository | null = null;
+  tag: Tag | null = null;
+  image: Image | null = null;
 
-  repository: Repository | null = null
-  tag: Tag | null = null
-  image: Image | null = null
-
-  loading = true
-  errorMessage = ""
+  loading = true;
+  errorMessage = '';
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private registryService: RegistryService,
-    private modalService: NgbModal) {
-  }
+    private modalService: NgbModal,
+  ) {}
 
   ngOnInit() {
     this.loading = true;
@@ -37,46 +38,45 @@ export class ImageDetailComponent {
     if (!name) {
       throw new Error("Missing reqired parameter 'name' in path");
     }
-    const tag = params['tag']
+    const tag = params['tag'];
     if (!tag) {
       throw new Error("Missing reqired parameter 'tag' in path");
     }
     if (!imageShortDigest) {
       throw new Error("Missing reqired parameter 'image' in path");
     }
-    this.repository = this.registryService.createRepository(namespaces, name)
-    this.registryService.getTag(this.repository, tag)
-      .subscribe({
-        next: (tag) => {
-          this.tag = tag;
-          tag.images.forEach(image => {
-            if (image.digestShort === imageShortDigest) {
-              this.setImage(image)
-            }
-          });
-          this.loading = false;
-        },
-        error: (error) => {
-          this.loading = false;
-          if (typeof error === 'string') {
-            this.errorMessage = error;
-            return
+    this.repository = this.registryService.createRepository(namespaces, name);
+    this.registryService.getTag(this.repository, tag).subscribe({
+      next: (tag) => {
+        this.tag = tag;
+        tag.images.forEach((image) => {
+          if (image.digestShort === imageShortDigest) {
+            this.setImage(image);
           }
-          if (error instanceof HttpErrorResponse) {
-            this.errorMessage = "Error " + error.status + ": " + error.message;
-          }
-          console.error(error)
-          this.errorMessage = error.message;
+        });
+        this.loading = false;
+      },
+      error: (error) => {
+        this.loading = false;
+        if (typeof error === 'string') {
+          this.errorMessage = error;
+          return;
         }
-      })
+        if (error instanceof HttpErrorResponse) {
+          this.errorMessage = 'Error ' + error.status + ': ' + error.message;
+          return;
+        }
+        console.error(error);
+        this.errorMessage = error.message;
+      },
+    });
   }
 
   setImage(image: Image) {
     this.image = image;
   }
 
-  showLayerDialog(layer:Layer, content: any) {
-    this.modalService.open(content, { size: 'lg', backdrop: true, centered: true })
+  showLayerDialog(layer: Layer, content: any) {
+    this.modalService.open(content, { size: 'lg', backdrop: true, centered: true });
   }
-
 }

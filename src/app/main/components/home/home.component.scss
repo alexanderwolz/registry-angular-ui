@@ -1,6 +1,6 @@
-@import "variables";
+@use 'variables' as *;
 
-.lead{
-    font-size: medium;
-    color: $blue;
+.lead {
+  font-size: medium;
+  color: $blue;
 }

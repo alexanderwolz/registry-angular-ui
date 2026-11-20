@@ -1,15 +1,15 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { Tag } from '../../models/tag';
 
 @Component({
+  standalone: false,
   selector: 'app-tag-list',
   templateUrl: './tag-list.component.html',
-  styleUrls: ['./tag-list.component.scss']
+  changeDetection: ChangeDetectionStrategy.Eager,
+  styleUrls: ['./tag-list.component.scss'],
 })
 export class TagListComponent {
+  @Input() tags: Tag[] = [];
 
-  @Input() tags: Array<Tag> = [];
-
-  @Input() showMoreLine = false
-
+  @Input() showMoreLine = false;
 }

@@ -1,10 +1,10 @@
-@import "variables";
+@use 'variables' as *;
 
 .card-text {
-    font-size: large;
-    font-weight: 200;
+  font-size: large;
+  font-weight: 200;
 }
 
 .card {
-    margin-bottom: 1rem;
+  margin-bottom: 1rem;
 }

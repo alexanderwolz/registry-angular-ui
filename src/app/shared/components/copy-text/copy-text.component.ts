@@ -1,20 +1,20 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 
 @Component({
+  standalone: false,
   selector: 'app-copy-text',
   templateUrl: './copy-text.component.html',
-  styleUrls: ['./copy-text.component.scss']
+  changeDetection: ChangeDetectionStrategy.Eager,
+  styleUrls: ['./copy-text.component.scss'],
 })
 export class CopyTextComponent {
+  @Input() text = 'Empty Text';
+  @Input() tooltipText = 'Empty Tooltip';
 
-  @Input() text: string = "Empty Text"
-  @Input() tooltipText: string = "Empty Tooltip"
-
-  constructor(private clipboard: Clipboard) { }
+  constructor(private clipboard: Clipboard) {}
 
   copyToClipboard() {
     this.clipboard.copy(this.text);
   }
-
 }

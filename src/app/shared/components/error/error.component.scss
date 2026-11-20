@@ -1,11 +1,11 @@
-@import "variables";
+@use 'variables' as *;
 
-.notification-container{
+.notification-container {
   z-index: 1200;
   max-width: 70rem;
 }
 
-.alert{
-  margin:0;
+.alert {
+  margin: 0;
   margin-bottom: 0.5rem;
 }

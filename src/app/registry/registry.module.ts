@@ -18,7 +18,7 @@ import { RegistryRoutingModule } from './registry-routing.module';
     RepositoryOverviewComponent,
     TagOverviewComponent,
     TagDetailComponent,
-    ImageDetailComponent
+    ImageDetailComponent,
   ],
   imports: [
     AuthModule,
@@ -29,6 +29,6 @@ import { RegistryRoutingModule } from './registry-routing.module';
     RegistryRoutingModule,
     RegistryCoreModule,
     SharedModule,
-  ]
+  ],
 })
-export class RegistryModule { }
+export class RegistryModule {}

@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 import { Repository } from '../../../registry-core/models/repository';
@@ -7,26 +7,27 @@ import { Tag } from '../../../registry-core/models/tag';
 import { RegistryService } from '../../../registry-core/services/registry.service';
 
 @Component({
+  standalone: false,
   selector: 'app-tags',
   templateUrl: './tag-overview.component.html',
-  styleUrls: ['./tag-overview.component.scss']
+  changeDetection: ChangeDetectionStrategy.Eager,
+  styleUrls: ['./tag-overview.component.scss'],
 })
-export class TagOverviewComponent {
+export class TagOverviewComponent implements OnInit {
+  repository: Repository | null = null;
 
-  repository: Repository | null = null
+  tagContainers: TagContainer[] = [];
+  selection: Tag[] = [];
 
-  tagContainers: Array<TagContainer> = []
-  selection : Array<Tag> = []
+  selectAll = false;
 
-  selectAll: boolean = false;
-
-  loading = true
-  errorMessage = ""
+  loading = true;
+  errorMessage = '';
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private registryService: RegistryService) {
-  }
+    private registryService: RegistryService,
+  ) {}
 
   ngOnInit() {
     this.loading = true;
@@ -37,21 +38,24 @@ export class TagOverviewComponent {
       throw new Error("Missing reqired parameter 'name' in path");
     }
     this.repository = this.registryService.createRepository(namespaces, name);
-    this.registryService.loadTags(this.repository)
+    this.registryService
+      .loadTags(this.repository)
       .pipe(
-        catchError(error => {
+        catchError((error) => {
           if (error instanceof HttpErrorResponse && error.status === 404 && this.repository) {
-            return throwError(() => "Repository '" + this.repository?.getRelativePath() + "' does not exist!");
+            return throwError(
+              () => "Repository '" + this.repository?.getRelativePath() + "' does not exist!",
+            );
           }
           return throwError(() => error);
-        })
+        }),
       )
       .subscribe({
         next: (tags) => {
-          const tagContainers = new Array()
-          tags.forEach(tag => {
+          const tagContainers: TagContainer[] = [];
+          tags.forEach((tag) => {
             //wrap into UI model
-            tagContainers.push(new TagContainer(tag, false))
+            tagContainers.push(new TagContainer(tag, false));
           });
           this.tagContainers = tagContainers;
           this.loading = false;
@@ -60,47 +64,49 @@ export class TagOverviewComponent {
           this.loading = false;
           if (typeof error === 'string') {
             this.errorMessage = error;
-            return
+            return;
           }
           if (error instanceof HttpErrorResponse) {
             if (error.status === 404 && this.repository) {
-              this.errorMessage = "Repository '" + this.repository?.getRelativePath() + "' does not exist!"
-              return
+              this.errorMessage =
+                "Repository '" + this.repository?.getRelativePath() + "' does not exist!";
+              return;
             }
-            this.errorMessage = "Error " + error.status + ": " + error.message;
-            return
+            this.errorMessage = 'Error ' + error.status + ': ' + error.message;
+            return;
           }
-          console.error(error)
+          console.error(error);
           this.errorMessage = error.message;
-        }
-      })
+        },
+      });
   }
 
   updateAllSelections(allSelected: boolean) {
-    this.tagContainers.forEach(container => {
-      container.isSelected = allSelected
+    this.tagContainers.forEach((container) => {
+      container.isSelected = allSelected;
     });
-    if(allSelected){
-      this.selection = this.tagContainers.map(container => container.tag)
-    }else{
-      this.selection = []
+    if (allSelected) {
+      this.selection = this.tagContainers.map((container) => container.tag);
+    } else {
+      this.selection = [];
     }
   }
 
   updateSelection(container: TagContainer) {
     const containedInSelection = this.selection.includes(container.tag);
-    if(container.isSelected && !containedInSelection){
-      this.selection.push(container.tag)
+    if (container.isSelected && !containedInSelection) {
+      this.selection.push(container.tag);
     }
-    if(!container.isSelected && containedInSelection){
-      this.selection = this.selection.filter(tag => tag !== container.tag);
+    if (!container.isSelected && containedInSelection) {
+      this.selection = this.selection.filter((tag) => tag !== container.tag);
     }
-    this.selectAll = this.selection.length == this.tagContainers.length
+    this.selectAll = this.selection.length == this.tagContainers.length;
   }
-
 }
 
 class TagContainer {
-  constructor(readonly tag: Tag, public isSelected: boolean) { }
-
+  constructor(
+    readonly tag: Tag,
+    public isSelected: boolean,
+  ) {}
 }

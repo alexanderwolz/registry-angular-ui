@@ -5,11 +5,11 @@ import { LogoutComponent } from './components/logout/logout.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent, pathMatch: 'full' },
-  { path: 'logout', component: LogoutComponent, pathMatch: 'full' }
+  { path: 'logout', component: LogoutComponent, pathMatch: 'full' },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AuthRoutingModule { }
+export class AuthRoutingModule {}

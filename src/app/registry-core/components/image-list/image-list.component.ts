@@ -1,13 +1,13 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { Tag } from '../../models/tag';
 
 @Component({
+  standalone: false,
   selector: 'app-image-list',
   templateUrl: './image-list.component.html',
-  styleUrls: ['./image-list.component.scss']
+  changeDetection: ChangeDetectionStrategy.Eager,
+  styleUrls: ['./image-list.component.scss'],
 })
 export class ImageListComponent {
-
   @Input() tag: Tag | null = null;
-
 }

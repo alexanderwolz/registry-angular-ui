@@ -20,7 +20,7 @@ import { TimeAgoPipe } from './pipes/time-ago.pipe';
     SpinnerComponent,
     TimeAgoPipe,
     TitleBoxComponent,
-    TitleComponent
+    TitleComponent,
   ],
   exports: [
     CopyTextComponent,
@@ -30,13 +30,8 @@ import { TimeAgoPipe } from './pipes/time-ago.pipe';
     SpinnerComponent,
     TimeAgoPipe,
     TitleBoxComponent,
-    TitleComponent
+    TitleComponent,
   ],
-  imports: [
-    CommonModule,
-    RouterModule,
-    NgbPopoverModule,
-    NgbTooltip
-  ]
+  imports: [CommonModule, RouterModule, NgbPopoverModule, NgbTooltip],
 })
-export class SharedModule { }
+export class SharedModule {}

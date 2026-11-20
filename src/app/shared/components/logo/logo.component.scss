@@ -1,32 +1,32 @@
-@import "variables";
+@use 'variables' as *;
 
 .logo {
-    text-transform: uppercase;
-    color: $text-color;
+  text-transform: uppercase;
+  color: $text-color;
 }
 
 .logo.dark {
-    color: white;
+  color: white;
 }
 
 .logo span {
-    color: $logo-primary-color;
-    font-weight: bold;
+  color: $logo-primary-color;
+  font-weight: bold;
 }
 
 .logo.dark span {
-    color: $white;
-    font-weight: 100;
+  color: $white;
+  font-weight: 100;
 }
 
 .fa-docker {
-    margin-right: 0.5em;
+  margin-right: 0.5em;
 }
 
 .logo.dark .fa-docker {
-    color: $white;
+  color: $white;
 }
 
 .logo .fa-docker {
-    color: $blue;
+  color: $blue;
 }

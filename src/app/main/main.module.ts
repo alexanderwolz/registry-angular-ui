@@ -11,18 +11,7 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { MainRoutingModule } from './main-routing.module';
 
 @NgModule({
-  declarations: [
-    FooterComponent,
-    HomeComponent,
-    IndexComponent,
-    NavbarComponent
-  ],
-  imports: [
-    CommonModule,
-    MainRoutingModule,
-    AuthModule,
-    RegistryCoreModule,
-    SharedModule,
-  ]
+  declarations: [FooterComponent, HomeComponent, IndexComponent, NavbarComponent],
+  imports: [CommonModule, MainRoutingModule, AuthModule, RegistryCoreModule, SharedModule],
 })
-export class MainModule { }
+export class MainModule {}

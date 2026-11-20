@@ -1,9 +1,9 @@
-import { Platform } from "./platform"
+import { Platform } from './platform';
 
 export interface ManifestReference {
-    mediaType: string
-    digest: string
-    size: number
-    platform: Platform
-    annotations: any
+  mediaType: string;
+  digest: string;
+  size: number;
+  platform: Platform;
+  annotations: any;
 }

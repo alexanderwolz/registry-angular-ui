@@ -12,69 +12,106 @@ const routes: Routes = [
   {
     path: '',
     children: [
-      { matcher: imageDetails, component: ImageDetailComponent, data: { title: "image" } },
-      { matcher: tagDetails, component: TagDetailComponent, data: { title: "tag" } },
-      { matcher: tagOverview, component: TagOverviewComponent, data: { title: "tags" } },
-      { matcher: repositoryDetails, component: RepositoryDetailComponent, data: { title: "repository" } },
-      { path: 'repositories', component: RepositoryOverviewComponent, data: { title: "repositories" } },
-      { path: '**', redirectTo: 'repositories' }
+      { matcher: imageDetails, component: ImageDetailComponent, data: { title: 'image' } },
+      { matcher: tagDetails, component: TagDetailComponent, data: { title: 'tag' } },
+      { matcher: tagOverview, component: TagOverviewComponent, data: { title: 'tags' } },
+      {
+        matcher: repositoryDetails,
+        component: RepositoryDetailComponent,
+        data: { title: 'repository' },
+      },
+      {
+        path: 'repositories',
+        component: RepositoryOverviewComponent,
+        data: { title: 'repositories' },
+      },
+      { path: '**', redirectTo: 'repositories' },
     ],
     component: IndexComponent,
-    canActivate: [authGuard]
-  }
+    canActivate: [authGuard],
+  },
 ];
 
 // matches repositories/[:namespaces]*/:name/tags/:tag/images/:digest
 export function imageDetails(segments: UrlSegment[]): UrlMatchResult | null {
-  if (segments.length > 5 && segments[0].path === "repositories"
-    && segments[segments.length - 4].path === "tags"
-    && segments[segments.length - 2].path === "images") {
-    const namespaces = new UrlSegment(segments.slice(1, -5).map(segment => segment.path).join("/"), {})
-    const name = segments.at(-5)!
-    const tag = segments.at(-3)!
-    const image = segments.at(-1)!
-    return ({ consumed: segments, posParams: ({ namespaces, name, tag, image }) })
+  if (
+    segments.length > 5 &&
+    segments[0].path === 'repositories' &&
+    segments[segments.length - 4].path === 'tags' &&
+    segments[segments.length - 2].path === 'images'
+  ) {
+    const namespaces = new UrlSegment(
+      segments
+        .slice(1, -5)
+        .map((segment) => segment.path)
+        .join('/'),
+      {},
+    );
+    const name = segments.at(-5)!;
+    const tag = segments.at(-3)!;
+    const image = segments.at(-1)!;
+    return { consumed: segments, posParams: { namespaces, name, tag, image } };
   }
   //see https://angular.io/api/router/UrlMatchResult
-  return null
+  return null;
 }
 
 // matches repositories/[:namespaces]*/:name/tags/:tag
 export function tagDetails(segments: UrlSegment[]): UrlMatchResult | null {
-  if (segments.length > 3 && segments[0].path === "repositories" && segments[segments.length - 2].path === "tags") {
-    const namespaces = new UrlSegment(segments.slice(1, -3).map(segment => segment.path).join("/"), {})
-    const name = segments.at(-3)!
-    const tag = segments.at(-1)!
-    return ({ consumed: segments, posParams: ({ namespaces, name, tag }) })
+  if (
+    segments.length > 3 &&
+    segments[0].path === 'repositories' &&
+    segments[segments.length - 2].path === 'tags'
+  ) {
+    const namespaces = new UrlSegment(
+      segments
+        .slice(1, -3)
+        .map((segment) => segment.path)
+        .join('/'),
+      {},
+    );
+    const name = segments.at(-3)!;
+    const tag = segments.at(-1)!;
+    return { consumed: segments, posParams: { namespaces, name, tag } };
   }
   //see https://angular.io/api/router/UrlMatchResult
-  return null
+  return null;
 }
 
 // matches repositories/[:namespaces]*/:name/tags
 export function tagOverview(segments: UrlSegment[]): UrlMatchResult | null {
-  if (segments.length > 2 && segments[0].path === "repositories" && segments[segments.length - 1].path === "tags") {
-    const namespaces = new UrlSegment(segments.slice(1, -2).map(segment => segment.path).join("/"), {})
-    const name = segments.at(-2)!
-    return ({ consumed: segments, posParams: ({ namespaces, name }) })
+  if (
+    segments.length > 2 &&
+    segments[0].path === 'repositories' &&
+    segments[segments.length - 1].path === 'tags'
+  ) {
+    const namespaces = new UrlSegment(
+      segments
+        .slice(1, -2)
+        .map((segment) => segment.path)
+        .join('/'),
+      {},
+    );
+    const name = segments.at(-2)!;
+    return { consumed: segments, posParams: { namespaces, name } };
   }
   //see https://angular.io/api/router/UrlMatchResult
-  return null
+  return null;
 }
 
 // matches repositories/[:namespaces]*/:name
 export function repositoryDetails(segments: UrlSegment[]): UrlMatchResult | null {
-  if (segments.length > 1 && segments[0].path === "repositories") {
-    const namespaces = new UrlSegment(segments.slice(1, -1).join("/"), {})
-    const name = segments.at(-1)!
-    return ({ consumed: segments, posParams: ({ namespaces, name }) })
+  if (segments.length > 1 && segments[0].path === 'repositories') {
+    const namespaces = new UrlSegment(segments.slice(1, -1).join('/'), {});
+    const name = segments.at(-1)!;
+    return { consumed: segments, posParams: { namespaces, name } };
   }
   //see https://angular.io/api/router/UrlMatchResult
-  return null
+  return null;
 }
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class RegistryRoutingModule { }
+export class RegistryRoutingModule {}

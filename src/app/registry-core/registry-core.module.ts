@@ -13,19 +13,14 @@ import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
     BreadcrumbMenuComponent,
     ImageListComponent,
     TagListComponent,
-    TagDeleteButtonComponent
+    TagDeleteButtonComponent,
   ],
   exports: [
     BreadcrumbMenuComponent,
     ImageListComponent,
     TagListComponent,
-    TagDeleteButtonComponent
+    TagDeleteButtonComponent,
   ],
-  imports: [
-    CommonModule,
-    RouterModule,
-    SharedModule,
-    NgbTooltip
-  ]
+  imports: [CommonModule, RouterModule, SharedModule, NgbTooltip],
 })
-export class RegistryCoreModule { }
+export class RegistryCoreModule {}

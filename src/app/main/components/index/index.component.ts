@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
+  standalone: false,
   selector: 'app-index',
   templateUrl: './index.component.html',
-  styleUrls: ['./index.component.scss']
+  changeDetection: ChangeDetectionStrategy.Eager,
+  styleUrls: ['./index.component.scss'],
 })
-export class IndexComponent {
-
-}
+export class IndexComponent {}

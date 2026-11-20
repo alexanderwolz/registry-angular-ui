@@ -1,5 +1,6 @@
 export class Pagination {
-
-    constructor(readonly limit: number, readonly last?: string) { }
-
+  constructor(
+    readonly limit: number,
+    readonly last?: string,
+  ) {}
 }

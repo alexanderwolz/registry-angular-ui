@@ -1,12 +1,12 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
+  standalone: false,
   selector: 'app-logo',
   templateUrl: './logo.component.html',
-  styleUrls: ['./logo.component.scss']
+  changeDetection: ChangeDetectionStrategy.Eager,
+  styleUrls: ['./logo.component.scss'],
 })
 export class LogoComponent {
-
-  @Input() dark: boolean = false;
-
+  @Input() dark = false;
 }

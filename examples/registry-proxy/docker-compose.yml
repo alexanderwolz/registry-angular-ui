@@ -2,7 +2,7 @@ services:
 
   remote_proxy:
     container_name: remote_proxy
-    image: nginx:1.27.0-alpine-slim
+    image: nginx:stable-alpine-slim
     restart: unless-stopped
     command: /bin/sh -c "envsubst '$$REMOTE_REGISTRY' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
     ports:
