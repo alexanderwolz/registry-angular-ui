@@ -1,9 +1,15 @@
 <span>
-    {{text}}
-    <span class="copy-button"[ngbPopover]="tooltipText" triggers="click">
-        <i class="fa-sharp fa-solid fa-copy"
-            (click)="copyToClipboard()"
-            ngbTooltip="Copy to clipboard" [autoClose]="'outside'">
-        </i>
-    </span>
+  {{ text }}
+  <span class="copy-button" [ngbPopover]="tooltipText" triggers="click">
+    <i
+      class="fa-sharp fa-solid fa-copy"
+      role="button"
+      tabindex="0"
+      (click)="copyToClipboard()"
+      (keyup.enter)="copyToClipboard()"
+      ngbTooltip="Copy to clipboard"
+      [autoClose]="'outside'"
+    >
+    </i>
+  </span>
 </span>

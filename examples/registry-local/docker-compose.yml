@@ -2,7 +2,7 @@ services:
 
   registry:
     container_name: registry
-    image: registry:2.8.2
+    image: registry:2.8.3
     restart: unless-stopped
     environment:
       REGISTRY_HTTP_HOST: "http://localhost:8000"
@@ -18,7 +18,7 @@ services:
   
   registry_proxy:
     container_name: registry_proxy
-    image: nginx:1.27.0-alpine-slim
+    image: nginx:stable-alpine-slim
     restart: unless-stopped
     ports:
       - "8000:8080"
@@ -30,6 +30,8 @@ services:
   registry_angular_ui:
     container_name: registry_angular_ui
     hostname: registry_angular_ui
+    build:
+      context: ../..
     image: alexanderwolz/registry-angular-ui:latest
     restart: unless-stopped
     ports:

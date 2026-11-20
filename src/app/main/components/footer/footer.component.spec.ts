@@ -1,21 +1,13 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { TestBed } from '@angular/core/testing';
 import { FooterComponent } from './footer.component';
 
 describe('FooterComponent', () => {
-  let component: FooterComponent;
-  let fixture: ComponentFixture<FooterComponent>;
-
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      declarations: [FooterComponent]
-    });
-    fixture = TestBed.createComponent(FooterComponent);
-    component = fixture.componentInstance;
+  it('should link to the project on github in a new tab', () => {
+    TestBed.configureTestingModule({ imports: [FooterComponent] });
+    const fixture = TestBed.createComponent(FooterComponent);
     fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
+    const link = (fixture.nativeElement as HTMLElement).querySelector('a')!;
+    expect(link.getAttribute('href')).toBe('https://github.com/alexanderwolz/registry-angular-ui');
+    expect(link.getAttribute('target')).toBe('_blank');
   });
 });

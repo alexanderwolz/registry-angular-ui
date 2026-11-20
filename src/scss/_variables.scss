@@ -1,3 +1,5 @@
+@use 'sass:string';
+
 // -- Color Definitions -- //
 $blue: #286090;
 $blue2: #233c59;
@@ -39,7 +41,7 @@ $navbar-height: 57px;
 
 $font-size-root: null !default;
 $font-size-base: 0.95rem !default; //was 1rem
-$font-size-sm: $font-size-base * .875 !default;
+$font-size-sm: $font-size-base * 0.875 !default;
 $font-size-lg: $font-size-base * 1.25 !default;
 
 $primary: $blue;
@@ -59,18 +61,18 @@ $tooltip-max-width: 300px !default;
 $tooltip-color: $white !default;
 $tooltip-bg: $blue2 !default;
 $tooltip-border-radius: $border-radius !default;
-$tooltip-padding-y: 1rem * .25 !default;
-$tooltip-padding-x: 1rem * .5 !default;
+$tooltip-padding-y: 1rem * 0.25 !default;
+$tooltip-padding-x: 1rem * 0.5 !default;
 
 $popover-max-width: 300px !default;
 $popover-body-color: $white !default;
 $popover-bg: $blue2 !default;
 $popover-header-color: $white !default;
 $popover-header-bg: shade-color($popover-bg, 6%) !default;
-$popover-body-padding-y: 1rem * .25 !default;
-$popover-body-padding-x: 1rem * .5 !default;
+$popover-body-padding-y: 1rem * 0.25 !default;
+$popover-body-padding-x: 1rem * 0.5 !default;
 
-$breadcrumb-divider: quote(">");
+$breadcrumb-divider: string.quote('>');
 $breadcrumb-bg: $white !default;
 $breadcrumb-margin-bottom: 0 !default;
 $breadcrumb-padding-y: 0.5rem !default;
@@ -86,11 +88,22 @@ $toast-spacing: 0.5rem !default;
 // $toast-color: none !default;
 
 // -- font definitons -- //
-$font-family-sans-serif: Roboto, system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
-$font-family-monospace: Source Code Pro, Consolas, Monaco, Andale Mono, Ubuntu Mono, monospace !default;
-
+$font-family-sans-serif:
+  Roboto,
+  system-ui,
+  -apple-system,
+  'Helvetica Neue',
+  Arial,
+  sans-serif;
+$font-family-monospace:
+  Source Code Pro,
+  Consolas,
+  Monaco,
+  Andale Mono,
+  Ubuntu Mono,
+  monospace !default;
 
 // -- Bootstrap Variables and Functions-- //
 // -- must be imported AFTER variable definitions -- //
-@import "bootstrap/scss/functions";
-@import "bootstrap/scss/variables";
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';

@@ -1,7 +1,7 @@
-@import "variables";
+@use 'variables' as *;
 
-.highlight{
-    color:$primary;
+.highlight {
+  color: $primary;
 }
 
 // button {

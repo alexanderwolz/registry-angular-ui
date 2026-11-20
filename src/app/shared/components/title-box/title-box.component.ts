@@ -1,11 +1,14 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { TitleComponent } from '../title/title.component';
 
 @Component({
   selector: 'app-title-box',
   templateUrl: './title-box.component.html',
-  styleUrls: ['./title-box.component.scss']
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrls: ['./title-box.component.scss'],
+  imports: [TitleComponent],
 })
 export class TitleBoxComponent {
-  @Input() segments: Array<String> = [];
-  @Input() title: string = "Title"
+  @Input() segments: string[] = [];
+  @Input() title = 'Title';
 }

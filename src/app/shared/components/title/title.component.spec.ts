@@ -1,21 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { TestBed } from '@angular/core/testing';
 import { TitleComponent } from './title.component';
 
 describe('TitleComponent', () => {
-  let component: TitleComponent;
-  let fixture: ComponentFixture<TitleComponent>;
-
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      declarations: [TitleComponent]
-    });
-    fixture = TestBed.createComponent(TitleComponent);
-    component = fixture.componentInstance;
+  it('should show the segments in front of the title', () => {
+    TestBed.configureTestingModule({ imports: [TitleComponent] });
+    const fixture = TestBed.createComponent(TitleComponent);
+    fixture.componentInstance.segments = ['team', 'app'];
+    fixture.componentInstance.title = 'Tags';
     fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent!.replace(/\s+/g, ' ').trim()).toBe('team / app / Tags');
+    expect(element.querySelector('.title')!.textContent).toBe('Tags');
   });
 });

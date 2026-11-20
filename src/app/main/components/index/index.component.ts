@@ -1,10 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { NavbarComponent } from '../navbar/navbar.component';
+import { RouterOutlet } from '@angular/router';
+import { FooterComponent } from '../footer/footer.component';
 
 @Component({
   selector: 'app-index',
   templateUrl: './index.component.html',
-  styleUrls: ['./index.component.scss']
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrls: ['./index.component.scss'],
+  imports: [NavbarComponent, RouterOutlet, FooterComponent],
 })
-export class IndexComponent {
-
-}
+export class IndexComponent {}

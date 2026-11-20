@@ -3,16 +3,12 @@ import { Subject } from 'rxjs';
 import { Event } from '../models/event';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class EventService {
-
-  subject = new Subject<any>();
-
-  constructor() { }
+  subject = new Subject<Event>();
 
   emit(event: Event) {
     this.subject.next(event);
   }
-
 }

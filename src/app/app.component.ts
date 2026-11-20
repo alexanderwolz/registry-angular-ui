@@ -1,9 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { ErrorComponent } from './shared/components/error/error.component';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrls: ['./app.component.scss'],
+  imports: [ErrorComponent, RouterOutlet],
 })
 export class AppComponent {
   title = 'registry-fronted';

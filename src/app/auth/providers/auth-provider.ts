@@ -1,22 +1,22 @@
-import { Observable } from "rxjs"
-import { Scope } from "../models/scope"
+import { Observable } from 'rxjs';
+import { Scope } from '../models/scope';
 
 export interface AuthProvider {
+  getType(): Type;
 
-    getType(): Type
+  login(username: string, password: string): Observable<string>;
 
-    login(username: string, password: string): Observable<string>
+  logout(): void;
 
-    logout(): void
+  isAuthenticated(): boolean;
 
-    isAuthenticated(): boolean
+  getAuthorizationFor(scope: Scope): Observable<string>;
 
-    getAuthorizationFor(scope: Scope): Observable<string>
-
-    getUsername(): string
-
+  getUsername(): string;
 }
 
 export enum Type {
-    EMPTY, BASIC, TOKEN
+  EMPTY,
+  BASIC,
+  TOKEN,
 }

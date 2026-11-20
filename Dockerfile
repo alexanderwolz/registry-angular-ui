@@ -1,32 +1,43 @@
-# Stage 1 - dependencies
-FROM --platform=$BUILDPLATFORM node:20.2.0-alpine3.17 as build
+# Base images are pinned to an exact version for reproducible builds.
+
+# Stage 1 - build
+FROM --platform=$BUILDPLATFORM node:26.13.1-alpine3.24 AS build
 
 WORKDIR /app
 
+# the npm download cache survives dependency changes between builds
 COPY package.json package-lock.json ./
-RUN npm install --silent
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --no-audit --no-fund --silent
 
-COPY . .
+# only copy what the build needs, so unrelated changes (docs, examples, workflows) keep the cache
+COPY angular.json tsconfig*.json ./
+COPY src ./src
 
+# the Angular build cache makes rebuilds after small code changes faster
 ARG STAGE=production
-RUN npm run build -- --output-path=./dist/out --configuration $STAGE
-RUN echo RELEASE_$(grep '"version":' package.json | cut -d\" -f4)_$(date -u +%Y-%m-%dT%H:%M:%SUTC)_$STAGE > ./dist/out/version
+RUN --mount=type=cache,target=/app/.angular/cache \
+    npm run build -- --configuration $STAGE \
+    && echo RELEASE_$(grep '"version":' package.json | cut -d\" -f4)_$(date -u +%Y-%m-%dT%H:%M:%SUTC)_$STAGE > ./dist/registry-fronted/version
 
 
-# Stage 3 - run
-FROM nginx:1.27.0-alpine-slim as run
+# Stage 2 - run
+FROM nginx:1.31.9-alpine-slim AS run
 LABEL maintainer="mail@alexanderwolz.de"
 
 ENV REGISTRY_HOST=http://localhost:5000
 ENV TOKEN_SECRET=PleaseReplaceMeAsSoonAsPossible
 ENV CHECK_PULL_ACCESS=false
+ENV SECURITY_HEADERS=true
 
-RUN apk update && apk add bash
+RUN apk upgrade --no-cache
 
 COPY --chown=nginx:nginx nginx.conf /etc/nginx/nginx.conf
-COPY --from=build /app/dist/out/ /usr/share/nginx/html
+COPY --chown=nginx:nginx security-headers.conf /etc/nginx/security-headers.conf
+COPY --chown=nginx:nginx security-headers.conf /etc/nginx/security-headers.default
+COPY --chown=nginx:nginx --from=build /app/dist/registry-fronted/ /usr/share/nginx/html
 
-RUN chown -R nginx:nginx /usr/share/nginx \
+RUN chown nginx:nginx /usr/share/nginx /usr/share/nginx/html \
     && chown -R nginx:nginx /var/cache/nginx \
     && chown -R nginx:nginx /var/log/nginx \
     && chown -R nginx:nginx /etc/nginx/conf.d \
@@ -37,9 +48,11 @@ WORKDIR /usr/share/nginx
 
 USER nginx
 
-RUN echo "mainFileName=\"\$(ls html/main*.js)\" \
-    && envsubst '\${REGISTRY_HOST} \${TOKEN_SECRET} \${CHECK_PULL_ACCESS}' < \${mainFileName} > main.tmp \
-    && mv main.tmp  \${mainFileName} \
-    && nginx -g 'daemon off;'" > run.sh
+RUN echo "if [ \"\${SECURITY_HEADERS}\" = \"false\" ]; then : > /etc/nginx/security-headers.conf; \
+    else cp /etc/nginx/security-headers.default /etc/nginx/security-headers.conf; fi; \
+    for file in html/*.js; do \
+    envsubst '\${REGISTRY_HOST} \${TOKEN_SECRET} \${CHECK_PULL_ACCESS}' < \${file} > file.tmp \
+    && mv file.tmp \${file}; done \
+    && exec nginx -g 'daemon off;'" > run.sh
 
-CMD [ "bash", "run.sh" ]
+CMD [ "sh", "run.sh" ]

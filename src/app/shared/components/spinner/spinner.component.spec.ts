@@ -1,25 +1,12 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { TestBed } from '@angular/core/testing';
 import { SpinnerComponent } from './spinner.component';
 
 describe('SpinnerComponent', () => {
-  let component: SpinnerComponent;
-  let fixture: ComponentFixture<SpinnerComponent>;
-
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ SpinnerComponent ]
-    })
-    .compileComponents();
-  }));
-
-  beforeEach(() => {
-    fixture = TestBed.createComponent(SpinnerComponent);
-    component = fixture.componentInstance;
+  it('should announce loading to assistive technology', () => {
+    TestBed.configureTestingModule({ imports: [SpinnerComponent] });
+    const fixture = TestBed.createComponent(SpinnerComponent);
     fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
+    const spinner = (fixture.nativeElement as HTMLElement).querySelector('[role="status"]');
+    expect(spinner?.textContent).toContain('Loading');
   });
 });

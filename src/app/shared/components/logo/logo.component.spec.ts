@@ -1,21 +1,24 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { TestBed } from '@angular/core/testing';
 import { LogoComponent } from './logo.component';
 
 describe('LogoComponent', () => {
-  let component: LogoComponent;
-  let fixture: ComponentFixture<LogoComponent>;
-
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      declarations: [LogoComponent]
-    });
-    fixture = TestBed.createComponent(LogoComponent);
-    component = fixture.componentInstance;
+  function create(dark?: boolean) {
+    TestBed.configureTestingModule({ imports: [LogoComponent] });
+    const fixture = TestBed.createComponent(LogoComponent);
+    if (dark !== undefined) fixture.componentInstance.dark = dark;
     fixture.detectChanges();
+    return fixture.nativeElement as HTMLElement;
+  }
+
+  it('should show the product name', () => {
+    const text = create().textContent;
+    expect(text).toContain('Registry');
+    expect(text).toContain('Frontend');
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('should be light by default and dark on request', () => {
+    expect(create().querySelector('.logo')!.classList.contains('dark')).toBe(false);
+    TestBed.resetTestingModule();
+    expect(create(true).querySelector('.logo')!.classList.contains('dark')).toBe(true);
   });
 });

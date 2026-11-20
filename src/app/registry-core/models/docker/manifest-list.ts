@@ -1,7 +1,7 @@
-import { ManifestReference } from "./manifest-reference"
+import { ManifestReference } from './manifest-reference';
 
 export interface ManifestList {
-    mediaType: string
-    schemaVersion: number
-    manifests: Array<ManifestReference>
+  mediaType: string;
+  schemaVersion: number;
+  manifests: ManifestReference[];
 }

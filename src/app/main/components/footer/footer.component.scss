@@ -1,5 +1,5 @@
 @use 'sass:math';
-@import "variables";
+@use 'variables' as *;
 
 .footer {
   font-size: small;
@@ -28,4 +28,3 @@
 .footer li a:hover {
   color: $blue2;
 }
-
