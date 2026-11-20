@@ -1,15 +1,18 @@
-@if (loading) {
+@if (loading()) {
   <div>
     <app-spinner></app-spinner>
   </div>
 }
 
-@if (!loading && repository && tag && image) {
+@let repo = repository();
+@let currentTag = tag();
+@let currentImage = image();
+@if (!loading() && repo && currentTag && currentImage) {
   <div>
     <app-breadcrumb-menu></app-breadcrumb-menu>
-    @if (errorMessage) {
+    @if (errorMessage()) {
       <div class="alert alert-danger" role="alert">
-        {{ errorMessage }}
+        {{ errorMessage() }}
         <a [routerLink]="'/repositories/'">
           <div>back to overview</div>
         </a>
@@ -22,41 +25,47 @@
             <div class="row">
               <div class="col-9 col-md-10">
                 <app-title
-                  [segments]="repository.getAllNamespacesAndNameAsArray()"
-                  [title]="tag.name"
+                  [segments]="repo.getAllNamespacesAndNameAsArray()"
+                  [title]="currentTag.name"
                 >
                 </app-title>
                 <div class="mt-2">
                   <span class="digest-title">Digest: </span>
-                  <span class="digest-value">{{ image.digest }}</span>
+                  <span class="digest-value">{{ currentImage.digest }}</span>
                 </div>
               </div>
               <div class="col-3 col-md-2">
-                <app-tag-delete-button class="text-end" [tags]="[tag]"></app-tag-delete-button>
+                <app-tag-delete-button
+                  class="text-end"
+                  [tags]="[currentTag]"
+                ></app-tag-delete-button>
               </div>
             </div>
             <div class="row" style="margin-top: 1rem">
               <div class="col">
                 <div class="element-title">Platform</div>
-                <div class="element-value">{{ image.platformString }}</div>
+                <div class="element-value">{{ currentImage.platformString }}</div>
               </div>
               <div class="col border-left">
                 <div class="element-title">Compressed Size</div>
-                <div class="element-value">{{ image.totalCompressedSizeString }}</div>
+                <div class="element-value">{{ currentImage.totalCompressedSizeString }}</div>
               </div>
               <div class="col border-left">
                 <div class="element-title">Created</div>
                 <div class="element-value">
-                  <span placement="top" [ngbTooltip]="image.configuration.created | date: 'medium'">
-                    {{ image.configuration.created | timeAgo }}
+                  <span
+                    placement="top"
+                    [ngbTooltip]="currentImage.configuration.created | date: 'medium'"
+                  >
+                    {{ currentImage.configuration.created | timeAgo }}
                   </span>
                 </div>
               </div>
               <div class="col border-left">
                 <div class="element-title">Type</div>
                 <div class="element-value">
-                  <span placement="top" [ngbTooltip]="image.manifest.mediaType">
-                    {{ image.getType() }}
+                  <span placement="top" [ngbTooltip]="currentImage.manifest.mediaType">
+                    {{ currentImage.getType() }}
                   </span>
                 </div>
               </div>
@@ -69,13 +78,13 @@
           <div class="card-text">
             <div class="title">
               <div class="d-flex w-100 justify-content-between">
-                <span>Image Layers ({{ image.layers.length }})</span>
+                <span>Image Layers ({{ currentImage.layers.length }})</span>
                 <!-- <button class="btn btn-outline-primary btn-sm">Show as Dockerfile</button> -->
               </div>
             </div>
             <div class="row">
               <ul class="list-group list-group-flush p-2 layer-container">
-                @for (layer of image.layers; track layer; let index = $index) {
+                @for (layer of currentImage.layers; track layer; let index = $index) {
                   <div>
                     <ng-template #content let-modal class="width:100%">
                       <div class="modal-body">
@@ -92,7 +101,13 @@
                         </button>
                       </div>
                     </ng-template>
-                    <li class="list-group-item" (click)="showLayerDialog(layer, content)">
+                    <li
+                      class="list-group-item"
+                      role="button"
+                      tabindex="0"
+                      (click)="showLayerDialog(layer, content)"
+                      (keyup.enter)="showLayerDialog(layer, content)"
+                    >
                       <span class="layer-index">{{ index + 1 }} </span>
                       <span class="layer-command">{{ layer.command }} </span>
                       <span class="layer-instruction">{{ layer.getInstructionCropped(55) }}</span>

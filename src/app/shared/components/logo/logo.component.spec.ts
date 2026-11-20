@@ -1,10 +1,9 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { LogoComponent } from './logo.component';
 
 describe('LogoComponent', () => {
   function create(dark?: boolean) {
-    TestBed.configureTestingModule({ declarations: [LogoComponent], schemas: [NO_ERRORS_SCHEMA] });
+    TestBed.configureTestingModule({ imports: [LogoComponent] });
     const fixture = TestBed.createComponent(LogoComponent);
     if (dark !== undefined) fixture.componentInstance.dark = dark;
     fixture.detectChanges();

@@ -30,6 +30,8 @@ services:
   registry_angular_ui:
     container_name: registry_angular_ui
     hostname: registry_angular_ui
+    build:
+      context: ../..
     image: alexanderwolz/registry-angular-ui:latest
     restart: unless-stopped
     ports:

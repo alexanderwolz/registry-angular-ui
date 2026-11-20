@@ -1,4 +1,3 @@
-import { NO_ERRORS_SCHEMA, SimpleChange } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { TEST_PROVIDERS } from 'src/testing/test-providers';
@@ -9,8 +8,7 @@ import { BreadcrumbMenuComponent } from './breadcrumb-menu.component';
 describe('BreadcrumbMenuComponent', () => {
   function create(title: string, params: Record<string, string>, namespace: string | null = null) {
     TestBed.configureTestingModule({
-      declarations: [BreadcrumbMenuComponent],
-      schemas: [NO_ERRORS_SCHEMA],
+      imports: [BreadcrumbMenuComponent],
       providers: [
         ...TEST_PROVIDERS,
         { provide: ActivatedRoute, useValue: { snapshot: { data: { title }, params } } },
@@ -93,7 +91,7 @@ describe('BreadcrumbMenuComponent', () => {
   it('should prefer an explicit namespace over the one in the route and update on changes', () => {
     const fixture = create('repository', { namespaces: 'team', name: 'app' });
     fixture.componentInstance.namespace = 'other';
-    fixture.componentInstance.ngOnChanges({ namespace: new SimpleChange(null, 'other', false) });
+    fixture.componentInstance.ngOnChanges();
     expect(fixture.componentInstance.segments[1].name).toBe('other');
   });
 

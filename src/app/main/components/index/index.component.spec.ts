@@ -1,4 +1,3 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { TEST_PROVIDERS } from 'src/testing/test-providers';
 import { IndexComponent } from './index.component';
@@ -6,9 +5,8 @@ import { IndexComponent } from './index.component';
 describe('IndexComponent', () => {
   it('should frame the routed page with navbar and footer', () => {
     TestBed.configureTestingModule({
-      declarations: [IndexComponent],
+      imports: [IndexComponent],
       providers: [...TEST_PROVIDERS],
-      schemas: [NO_ERRORS_SCHEMA],
     });
     const fixture = TestBed.createComponent(IndexComponent);
     fixture.detectChanges();

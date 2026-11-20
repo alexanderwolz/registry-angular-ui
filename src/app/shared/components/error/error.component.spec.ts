@@ -1,4 +1,3 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ErrorEvent } from '../../models/error-event';
 import { InfoEvent } from '../../models/info-event';
@@ -7,7 +6,7 @@ import { ErrorComponent } from './error.component';
 
 describe('ErrorComponent', () => {
   function create() {
-    TestBed.configureTestingModule({ declarations: [ErrorComponent], schemas: [NO_ERRORS_SCHEMA] });
+    TestBed.configureTestingModule({ imports: [ErrorComponent] });
     const fixture = TestBed.createComponent(ErrorComponent);
     fixture.detectChanges();
     return { fixture, component: fixture.componentInstance, events: TestBed.inject(EventService) };
@@ -23,7 +22,7 @@ describe('ErrorComponent', () => {
     const { fixture, component, events } = create();
     events.emit(new InfoEvent('saved'));
     fixture.detectChanges();
-    expect(component.notifications.length).toBe(1);
+    expect(component.notifications().length).toBe(1);
     const alert = (fixture.nativeElement as HTMLElement).querySelector('.alert')!;
     expect(alert.classList.contains('alert-primary')).toBe(true);
     expect(alert.textContent).toContain('saved');
@@ -52,15 +51,15 @@ describe('ErrorComponent', () => {
     const { fixture, component, events } = create();
     events.emit(new InfoEvent('one'));
     events.emit(new InfoEvent('two'));
-    component.removeNotification(component.notifications[0]);
+    component.removeNotification(component.notifications()[0]);
     fixture.detectChanges();
-    expect(component.notifications.map((n) => n.message)).toEqual(['two']);
+    expect(component.notifications().map((n) => n.message)).toEqual(['two']);
   });
 
   it('should stop listening when destroyed', () => {
     const { fixture, component, events } = create();
     fixture.destroy();
     events.emit(new InfoEvent('late'));
-    expect(component.notifications).toEqual([]);
+    expect(component.notifications()).toEqual([]);
   });
 });

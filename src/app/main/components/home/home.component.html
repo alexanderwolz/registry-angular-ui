@@ -1,10 +1,10 @@
-@if (loading) {
+@if (loading()) {
   <div>
     <app-spinner></app-spinner>
   </div>
 }
 
-@if (!loading) {
+@if (!loading()) {
   <div>
     <div class="container mt-5">
       <div class="jumbotron">
@@ -14,16 +14,16 @@
         </p>
         <hr class="my-4" />
         <div>
-          @if (totalRepositoryCount === 0) {
+          @if (totalRepositoryCount() === 0) {
             <div>
               Registry <span class="lead">{{ registry }}</span> seems to be empty , so take the
               chance to push some images 🥳
             </div>
           }
-          @if (totalRepositoryCount > 0) {
+          @if (totalRepositoryCount() > 0) {
             <div>
-              There {{ totalRepositoryCount == 1 ? 'is' : 'are' }}
-              <span class="lead">{{ totalRepositoryCount }} repositories</span> at registry
+              There {{ totalRepositoryCount() === 1 ? 'is' : 'are' }}
+              <span class="lead">{{ totalRepositoryCount() }} repositories</span> at registry
               <span class="lead">{{ registry }}</span> in total.
             </div>
           }

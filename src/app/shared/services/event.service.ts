@@ -6,9 +6,7 @@ import { Event } from '../models/event';
   providedIn: 'root',
 })
 export class EventService {
-  subject = new Subject<any>();
-
-  constructor() {}
+  subject = new Subject<Event>();
 
   emit(event: Event) {
     this.subject.next(event);

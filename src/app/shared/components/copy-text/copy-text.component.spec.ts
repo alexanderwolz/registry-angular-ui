@@ -1,5 +1,4 @@
 import { Clipboard } from '@angular/cdk/clipboard';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { CopyTextComponent } from './copy-text.component';
 
@@ -8,8 +7,7 @@ describe('CopyTextComponent', () => {
 
   function create(text?: string) {
     TestBed.configureTestingModule({
-      declarations: [CopyTextComponent],
-      schemas: [NO_ERRORS_SCHEMA],
+      imports: [CopyTextComponent],
       providers: [{ provide: Clipboard, useValue: { copy } }],
     });
     const fixture = TestBed.createComponent(CopyTextComponent);

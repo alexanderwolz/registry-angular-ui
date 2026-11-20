@@ -2,10 +2,11 @@ import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
 import { AuthProviderService } from '../services/auth-provider.service';
+import { REGISTRY_HOST } from '../../app.tokens';
 
 export const errorInterceptor: HttpInterceptorFn = (request, next) => {
   const authProviderService = inject(AuthProviderService);
-  const registryHost = inject<string>('REGISTRY_HOST' as never);
+  const registryHost = inject(REGISTRY_HOST);
 
   return next(request).pipe(
     catchError((error: HttpErrorResponse) => {

@@ -1,11 +1,12 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
-  standalone: false,
   selector: 'app-link-box',
   templateUrl: './link-box.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./link-box.component.scss'],
+  imports: [RouterLink],
 })
 export class LinkBoxComponent {
   @Input() routerLink = '';

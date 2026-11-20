@@ -1,4 +1,3 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { RouterLink } from '@angular/router';
 import { repository, tag } from 'src/testing/fixtures';
@@ -10,10 +9,8 @@ describe('TagListComponent', () => {
 
   function create(showMoreLine?: boolean) {
     TestBed.configureTestingModule({
-      imports: [RouterLink],
-      declarations: [TagListComponent],
+      imports: [RouterLink, TagListComponent],
       providers: [...TEST_PROVIDERS],
-      schemas: [NO_ERRORS_SCHEMA],
     });
     const fixture = TestBed.createComponent(TagListComponent);
     fixture.componentInstance.tags = [tag('v1', repo, ['amd64', 'arm64']), tag('v2', repo)];

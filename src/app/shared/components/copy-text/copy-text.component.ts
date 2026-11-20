@@ -1,18 +1,19 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, inject } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
+import { NgbPopover, NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  standalone: false,
   selector: 'app-copy-text',
   templateUrl: './copy-text.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./copy-text.component.scss'],
+  imports: [NgbPopover, NgbTooltip],
 })
 export class CopyTextComponent {
+  private clipboard = inject(Clipboard);
+
   @Input() text = 'Empty Text';
   @Input() tooltipText = 'Empty Tooltip';
-
-  constructor(private clipboard: Clipboard) {}
 
   copyToClipboard() {
     this.clipboard.copy(this.text);

@@ -1,31 +1,37 @@
-import { Component, Input, ChangeDetectionStrategy, OnInit, OnChanges } from '@angular/core';
-import { Params } from '@angular/router';
+import {
+  Component,
+  Input,
+  ChangeDetectionStrategy,
+  OnInit,
+  OnChanges,
+  inject,
+} from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { Repository } from 'src/app/registry-core/models/repository';
 import { Segment } from '../../../shared/models/segment';
 import { RegistryService } from 'src/app/registry-core/services/registry.service';
+import { NgClass } from '@angular/common';
 
 @Component({
-  standalone: false,
   selector: 'app-breadcrumb-menu',
   templateUrl: './breadcrumb-menu.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./breadcrumb-menu.component.scss'],
+  imports: [RouterLink, NgClass],
 })
 export class BreadcrumbMenuComponent implements OnInit, OnChanges {
+  private activatedRoute = inject(ActivatedRoute);
+  private registryService = inject(RegistryService);
+
   @Input() namespace: string | null = null;
   segments: Segment[] = [];
-
-  constructor(
-    private activatedRoute: ActivatedRoute,
-    private registryService: RegistryService,
-  ) {}
 
   ngOnInit() {
     this.updateSegments();
   }
 
-  ngOnChanges(changes: any) {
+  ngOnChanges() {
     this.updateSegments();
   }
 

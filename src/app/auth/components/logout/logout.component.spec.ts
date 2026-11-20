@@ -7,7 +7,7 @@ import { LogoutComponent } from './logout.component';
 describe('LogoutComponent', () => {
   function create(provider: { logout: () => void } | null) {
     TestBed.configureTestingModule({
-      declarations: [LogoutComponent],
+      imports: [LogoutComponent],
       providers: [
         ...TEST_PROVIDERS,
         { provide: AuthProviderService, useValue: { getAuthProvider: () => provider } },

@@ -1,11 +1,12 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { NgClass } from '@angular/common';
 
 @Component({
-  standalone: false,
   selector: 'app-logo',
   templateUrl: './logo.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./logo.component.scss'],
+  imports: [NgClass],
 })
 export class LogoComponent {
   @Input() dark = false;

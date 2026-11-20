@@ -1,21 +1,21 @@
-import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, inject } from '@angular/core';
 import { AuthProvider } from '../../providers/auth-provider';
 import { AuthProviderService } from '../../services/auth-provider.service';
 import { Router } from '@angular/router';
 
 @Component({
-  standalone: false,
   selector: 'app-logout',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<html><head><title>Logout</title></head><body>logging out ..</body></html>',
 })
 export class LogoutComponent implements OnInit {
+  private router = inject(Router);
+
   private authProvider: AuthProvider | null;
 
-  constructor(
-    private router: Router,
-    authProviderService: AuthProviderService,
-  ) {
+  constructor() {
+    const authProviderService = inject(AuthProviderService);
+
     this.authProvider = authProviderService.getAuthProvider();
   }
 

@@ -3,6 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { AuthProviderService } from '../services/auth-provider.service';
 import { errorInterceptor } from './error.interceptor';
+import { REGISTRY_HOST } from '../../app.tokens';
 
 const REGISTRY = 'http://localhost:5000';
 
@@ -17,7 +18,7 @@ describe('errorInterceptor', () => {
       providers: [
         provideHttpClient(withInterceptors([errorInterceptor])),
         provideHttpClientTesting(),
-        { provide: 'REGISTRY_HOST', useValue: REGISTRY },
+        { provide: REGISTRY_HOST, useValue: REGISTRY },
         { provide: AuthProviderService, useValue: { getAuthProvider: () => ({ logout }) } },
       ],
     });

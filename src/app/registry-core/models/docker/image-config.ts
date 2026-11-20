@@ -1,9 +1,9 @@
 export interface ImageConfig {
-  Volumes: any;
+  Volumes: Record<string, object> | null;
   ArgsEscaped: boolean;
   Cmd: string[];
   Entrypoint: string[];
   Env: string[];
-  ExposedPorts: any;
-  Labels: any;
+  ExposedPorts: Record<string, object> | null;
+  Labels: Record<string, string> | null;
 }

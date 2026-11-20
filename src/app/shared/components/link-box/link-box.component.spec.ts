@@ -1,20 +1,17 @@
-import { Component, NgModule } from '@angular/core';
-import { SharedModule } from '../../shared.module';
+import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { LinkBoxComponent } from './link-box.component';
 
 @Component({
-  standalone: false,
   template: '<app-link-box routerLink="/repositories">Browse</app-link-box>',
+  imports: [LinkBoxComponent],
 })
 class HostComponent {}
 
-@NgModule({ declarations: [HostComponent], imports: [SharedModule] })
-class TestModule {}
-
 describe('LinkBoxComponent', () => {
   it('should link to the given route and project its content', () => {
-    TestBed.configureTestingModule({ imports: [TestModule], providers: [provideRouter([])] });
+    TestBed.configureTestingModule({ imports: [HostComponent], providers: [provideRouter([])] });
     const fixture = TestBed.createComponent(HostComponent);
     fixture.detectChanges();
     const link = (fixture.nativeElement as HTMLElement).querySelector('a')!;

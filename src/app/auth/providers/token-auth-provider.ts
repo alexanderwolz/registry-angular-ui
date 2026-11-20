@@ -8,6 +8,15 @@ import { Token } from '../models/token';
 import { AbstractAuthProvider } from './abstract-auth-provider';
 import { Type } from './auth-provider';
 
+interface TokenResponse {
+  token: string;
+}
+
+interface JwtPayload {
+  access: unknown[];
+  exp: number;
+}
+
 export class TokenAuthProvider extends AbstractAuthProvider {
   private server: string;
   private clientId: string;
@@ -44,13 +53,13 @@ export class TokenAuthProvider extends AbstractAuthProvider {
     this.tokenCache.clear();
   }
 
-  private authenticate(base64Credentials: string, scope?: Scope): Observable<any> {
+  private authenticate(base64Credentials: string, scope?: Scope): Observable<TokenResponse> {
     const httpOptions = {
       headers: new HttpHeaders({ Authorization: 'Basic ' + base64Credentials }),
       params: this.getQueryParams(scope),
       withCredentials: false, //do not show basic auth prompt,
     };
-    return this.http.get(this.server, httpOptions);
+    return this.http.get<TokenResponse>(this.server, httpOptions);
   }
 
   private getQueryParams(scope?: Scope): HttpParams {
@@ -75,7 +84,7 @@ export class TokenAuthProvider extends AbstractAuthProvider {
     return this.authenticate(token.base64Credentials, scope).pipe(
       map((tokenResponse) => {
         const payload = this.parseJwt(tokenResponse.token);
-        if (payload.access.length == 0) {
+        if (payload.access.length === 0) {
           throw new Error('No Access items for scope ' + scopeString + ' (check permissions)');
         }
         //TODO check access items against scope object
@@ -85,7 +94,7 @@ export class TokenAuthProvider extends AbstractAuthProvider {
     );
   }
 
-  private parseJwt(token: string): any {
+  private parseJwt(token: string): JwtPayload {
     const base64Url = token.split('.')[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     const jsonPayload = decodeURIComponent(

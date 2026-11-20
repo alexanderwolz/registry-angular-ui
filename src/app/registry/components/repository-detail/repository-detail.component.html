@@ -1,25 +1,23 @@
-@if (loading) {
+@if (loading()) {
   <div>
     <app-spinner></app-spinner>
   </div>
 }
 
-@if (!loading && repository) {
+@let repo = repository();
+@if (!loading() && repo) {
   <div>
     <app-breadcrumb-menu></app-breadcrumb-menu>
-    @if (errorMessage) {
+    @if (errorMessage()) {
       <div class="alert alert-danger" role="alert">
-        {{ errorMessage }}
+        {{ errorMessage() }}
         <a [routerLink]="'/repositories/'">
           <div>back to overview</div>
         </a>
       </div>
     }
     <div class="container my-4">
-      <app-title-box
-        [segments]="repository.allNamespaces"
-        [title]="repository.name"
-      ></app-title-box>
+      <app-title-box [segments]="repo.allNamespaces" [title]="repo.name"></app-title-box>
       <div class="card">
         <div class="card-body">
           <div class="card-text">
@@ -27,16 +25,16 @@
               <h5 class="card-subtitle">Tags</h5>
               <p class="card-title">
                 This repository contains
-                {{ totalTagCount == 0 ? 'no' : totalTagCount }}
-                {{ totalTagCount == 1 ? 'tag' : 'tags' }}.
+                {{ totalTagCount() === 0 ? 'no' : totalTagCount() }}
+                {{ totalTagCount() === 1 ? 'tag' : 'tags' }}.
               </p>
-              @if (tags.length > 0) {
+              @if (tags().length > 0) {
                 <div>
-                  <app-tag-list [tags]="tags" [showMoreLine]="showMoreLine"></app-tag-list>
+                  <app-tag-list [tags]="tags()" [showMoreLine]="showMoreLine()"></app-tag-list>
                   <a
                     class="btn btn-outline-primary btn-sm"
                     role="button"
-                    [routerLink]="['/repositories/' + repository.getRelativePath() + '/tags']"
+                    [routerLink]="['/repositories/' + repo.getRelativePath() + '/tags']"
                   >
                     Show more
                   </a>

@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, map, of, throwError } from 'rxjs';
+import { Observable, map, of } from 'rxjs';
 import { Token } from '../models/token';
 import { AbstractAuthProvider } from './abstract-auth-provider';
 import { Scope } from '../models/scope';
@@ -31,7 +31,7 @@ export class BasicAuthProvider extends AbstractAuthProvider {
     );
   }
 
-  private authenticate(base64Credentials: string, scope?: string): Observable<any> {
+  private authenticate(base64Credentials: string): Observable<unknown> {
     const httpOptions = {
       headers: new HttpHeaders({ Authorization: 'Basic ' + base64Credentials }),
       withCredentials: false, //do not show basic auth prompt
@@ -39,7 +39,7 @@ export class BasicAuthProvider extends AbstractAuthProvider {
     return this.http.get(this.server, httpOptions);
   }
 
-  override doGetAuthorizationFor(token: Token, scope: Scope): Observable<string> {
+  override doGetAuthorizationFor(token: Token, _scope: Scope): Observable<string> {
     //TODO check result if it matches scope (user management)
     //return this.authenticate(token.base64Credentials, scope.toString).pipe(map(response => TODO))
     return of('Basic ' + token.base64Credentials);

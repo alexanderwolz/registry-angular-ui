@@ -1,31 +1,27 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
-import { NavigationExtras, Router } from '@angular/router';
+import { Component, Input, ChangeDetectionStrategy, TemplateRef, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Tag } from '../../models/tag';
 import { RegistryService } from '../../services/registry.service';
 import { EventService } from 'src/app/shared/services/event.service';
-import { Event } from 'src/app/shared/models/event';
 import { ErrorEvent } from 'src/app/shared/models/error-event';
 import { InfoEvent } from 'src/app/shared/models/info-event';
 
 @Component({
-  standalone: false,
   selector: 'app-tag-delete-button',
   templateUrl: './tag-delete-button.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./tag-delete-button.component.scss'],
 })
 export class TagDeleteButtonComponent {
+  private router = inject(Router);
+  private modalService = inject(NgbModal);
+  private registryService = inject(RegistryService);
+  private eventService = inject(EventService);
+
   @Input() tags: Tag[] = [];
 
-  constructor(
-    private router: Router,
-    private modalService: NgbModal,
-    private registryService: RegistryService,
-    private eventService: EventService,
-  ) {}
-
-  delete(tags: Tag[], content: any) {
+  delete(tags: Tag[], content: TemplateRef<unknown>) {
     this.modalService.open(content, { centered: true }).result.then((result) => {
       if (result) {
         tags.forEach((tag) => {

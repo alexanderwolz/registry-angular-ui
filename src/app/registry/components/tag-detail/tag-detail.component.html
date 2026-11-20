@@ -1,25 +1,29 @@
-@if (loading) {
+@if (loading()) {
   <div>
     <app-spinner></app-spinner>
   </div>
 }
 
-@if (!loading && tag) {
+@let current = tag();
+@if (!loading() && current) {
   <div>
     <app-breadcrumb-menu></app-breadcrumb-menu>
-    @if (errorMessage) {
+    @if (errorMessage()) {
       <div class="alert alert-danger" role="alert">
-        {{ errorMessage }}
+        {{ errorMessage() }}
         <a [routerLink]="'/repositories/'">
           <div>back to overview</div>
         </a>
       </div>
     }
     <div class="container my-4">
-      <app-title-box [segments]="tag.repository.allNamespaces" [title]="tag.repository.name">
-        <app-tag-delete-button class="text-end" [tags]="[tag]"></app-tag-delete-button>
+      <app-title-box
+        [segments]="current.repository.allNamespaces"
+        [title]="current.repository.name"
+      >
+        <app-tag-delete-button class="text-end" [tags]="[current]"></app-tag-delete-button>
       </app-title-box>
-      @if (tag) {
+      @if (current) {
         <div class="card">
           <div class="card-body">
             <div class="card-text">
@@ -27,19 +31,19 @@
                 <div class="col-3 col-md-2">
                   <div class="card-subtitle">Tag</div>
                   <div class="card-title">
-                    {{ tag.name }}
+                    {{ current.name }}
                   </div>
                 </div>
                 <div class="col-9 col-md-10 text-end">
                   <app-copy-text
                     class="badge cmd"
-                    [text]="tag.getPullCommand()"
+                    [text]="current.getPullCommand()"
                     tooltipText="Pull command copied"
                   ></app-copy-text>
                 </div>
               </div>
             </div>
-            <app-image-list [tag]="tag"></app-image-list>
+            <app-image-list [tag]="current"></app-image-list>
           </div>
         </div>
       }

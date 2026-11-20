@@ -1,4 +1,3 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { RouterLink } from '@angular/router';
 import { repository, tag } from 'src/testing/fixtures';
@@ -9,10 +8,8 @@ import { ImageListComponent } from './image-list.component';
 describe('ImageListComponent', () => {
   function create(withTag: boolean) {
     TestBed.configureTestingModule({
-      imports: [RouterLink],
-      declarations: [ImageListComponent, TimeAgoPipe],
+      imports: [RouterLink, ImageListComponent, TimeAgoPipe],
       providers: [...TEST_PROVIDERS],
-      schemas: [NO_ERRORS_SCHEMA],
     });
     const fixture = TestBed.createComponent(ImageListComponent);
     if (withTag)

@@ -12,8 +12,6 @@ export class StorageService {
 
   private caches = new Map<string, Cache>();
 
-  constructor() {}
-
   getStringFromLocalStorage(key: string): string | null {
     return this.localStorage.getItem(key);
   }
@@ -22,12 +20,12 @@ export class StorageService {
     this.localStorage.setItem(key, value);
   }
 
-  getObjectFromLocalStorage(key: string): any | null {
+  getObjectFromLocalStorage<T = unknown>(key: string): T | null {
     const auth = this.localStorage.getItem(key);
-    return auth != null ? JSON.parse(auth) : null;
+    return auth != null ? (JSON.parse(auth) as T) : null;
   }
 
-  saveObjectToLocalStorage(key: string, object: any) {
+  saveObjectToLocalStorage(key: string, object: unknown) {
     this.localStorage.removeItem(key);
     if (typeof object === 'string') {
       this.localStorage.setItem(key, object);

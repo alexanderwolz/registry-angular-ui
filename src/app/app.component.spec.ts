@@ -1,4 +1,3 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { TEST_PROVIDERS } from '../testing/test-providers';
 import { AppComponent } from './app.component';
@@ -6,9 +5,8 @@ import { AppComponent } from './app.component';
 describe('AppComponent', () => {
   beforeEach(() =>
     TestBed.configureTestingModule({
-      declarations: [AppComponent],
+      imports: [AppComponent],
       providers: [...TEST_PROVIDERS],
-      schemas: [NO_ERRORS_SCHEMA],
     }),
   );
 

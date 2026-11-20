@@ -1,31 +1,33 @@
 import { HttpClient } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, catchError, map, mergeMap, of, throwError } from 'rxjs';
+import { Observable, catchError, map, of } from 'rxjs';
 import { StorageService } from 'src/app/shared/services/storage.service';
 import { AuthProvider } from '../providers/auth-provider';
 import { BasicAuthProvider } from '../providers/basic-auth-provider';
 import { EmptyAuthProvider } from '../providers/empty-auth-provider';
 import { TokenAuthProvider } from '../providers/token-auth-provider';
 import { EventService } from 'src/app/shared/services/event.service';
+import { TOKEN_SECRET, REGISTRY_HOST } from '../../app.tokens';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthProviderService {
+  private http = inject(HttpClient);
+  private router = inject(Router);
+  private storageService = inject(StorageService);
+  private eventService = inject(EventService);
+  private tokenSecret = inject(TOKEN_SECRET);
+
   private error: Error | null = null;
   private authProvider: AuthProvider | null = null;
 
   private registryBaseUrl: string;
 
-  constructor(
-    private http: HttpClient,
-    private router: Router,
-    private storageService: StorageService,
-    private eventService: EventService,
-    @Inject('REGISTRY_HOST') registryHost: string,
-    @Inject('TOKEN_SECRET') private tokenSecret: string,
-  ) {
+  constructor() {
+    const registryHost = inject(REGISTRY_HOST);
+
     this.registryBaseUrl = registryHost + '/v2/';
   }
 
@@ -73,7 +75,7 @@ export class AuthProviderService {
               try {
                 const provider = this.createTokenAuthProviderFromAuthenticate(authenticate);
                 return this.setAuthProvider(provider);
-              } catch (error: any) {
+              } catch {
                 this.error = new Error("Header 'www-authenticate' could not be parsed.");
                 return this.setAuthProvider(null);
               }

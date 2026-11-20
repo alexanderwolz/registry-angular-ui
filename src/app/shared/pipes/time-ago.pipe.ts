@@ -1,12 +1,11 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-@Pipe({
-  standalone: false,
-  name: 'timeAgo',
-})
+@Pipe({ name: 'timeAgo' })
 export class TimeAgoPipe implements PipeTransform {
   //copied from https://stackoverflow.com/questions/61341891/is-there-are-angular-date-ago-pipe
-  transform(value: any, ...args: unknown[]): unknown {
+  transform(
+    value: Date | string | number | null | undefined,
+  ): string | Date | number | null | undefined {
     if (value) {
       const seconds = Math.floor((+new Date() - +new Date(value)) / 1000);
       if (seconds < 29) {

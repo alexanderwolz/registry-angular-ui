@@ -1,5 +1,4 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Observable, of, throwError } from 'rxjs';
 import { repository, tag } from 'src/testing/fixtures';
@@ -15,8 +14,7 @@ describe('TagDetailComponent', () => {
   ) {
     const getTag = vi.fn(() => tag$);
     TestBed.configureTestingModule({
-      declarations: [TagDetailComponent],
-      schemas: [NO_ERRORS_SCHEMA],
+      imports: [TagDetailComponent],
       providers: [
         ...TEST_PROVIDERS,
         routeParams(params),
@@ -34,8 +32,8 @@ describe('TagDetailComponent', () => {
   it('should load the tag given by the route', () => {
     const { c, getTag } = create(of(tag('v1', repository('app', 'team'))));
     expect(getTag).toHaveBeenCalledWith(expect.anything(), 'v1');
-    expect(c.tag?.name).toBe('v1');
-    expect(c.loading).toBe(false);
+    expect(c.tag()?.name).toBe('v1');
+    expect(c.loading()).toBe(false);
   });
 
   it('should require name and tag', () => {
@@ -46,14 +44,14 @@ describe('TagDetailComponent', () => {
 
   it('should show the http status instead of overwriting it', () => {
     const { c } = create(throwError(() => new HttpErrorResponse({ status: 404 })));
-    expect(c.errorMessage).toMatch(/^Error 404:/);
-    expect(c.loading).toBe(false);
+    expect(c.errorMessage()).toMatch(/^Error 404:/);
+    expect(c.loading()).toBe(false);
   });
 
   it('should show string and generic errors', () => {
     vi.spyOn(console, 'error').mockImplementation(() => undefined);
-    expect(create(throwError(() => 'plain')).c.errorMessage).toBe('plain');
+    expect(create(throwError(() => 'plain')).c.errorMessage()).toBe('plain');
     TestBed.resetTestingModule();
-    expect(create(throwError(() => new Error('boom'))).c.errorMessage).toBe('boom');
+    expect(create(throwError(() => new Error('boom'))).c.errorMessage()).toBe('boom');
   });
 });

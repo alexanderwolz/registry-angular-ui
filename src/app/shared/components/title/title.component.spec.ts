@@ -1,10 +1,9 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { TitleComponent } from './title.component';
 
 describe('TitleComponent', () => {
   it('should show the segments in front of the title', () => {
-    TestBed.configureTestingModule({ declarations: [TitleComponent], schemas: [NO_ERRORS_SCHEMA] });
+    TestBed.configureTestingModule({ imports: [TitleComponent] });
     const fixture = TestBed.createComponent(TitleComponent);
     fixture.componentInstance.segments = ['team', 'app'];
     fixture.componentInstance.title = 'Tags';

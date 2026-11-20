@@ -1,5 +1,4 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subject, of, throwError } from 'rxjs';
@@ -22,11 +21,10 @@ describe('RepositoryOverviewComponent', () => {
     queryParams: Record<string, string> = {},
   ) {
     TestBed.configureTestingModule({
-      declarations: [RepositoryOverviewComponent],
-      schemas: [NO_ERRORS_SCHEMA],
+      imports: [RepositoryOverviewComponent],
       providers: [
         ...TEST_PROVIDERS,
-        { provide: ActivatedRoute, useValue: { snapshot: { queryParams, params: {} } } },
+        { provide: ActivatedRoute, useValue: { snapshot: { queryParams, params: {}, data: {} } } },
         { provide: AuthProviderService, useValue: { getCurrentUsername: () => 'anna' } },
         {
           provide: RegistryService,
@@ -42,47 +40,47 @@ describe('RepositoryOverviewComponent', () => {
 
   it('should show the repositories of the own namespace first', () => {
     const { componentInstance: c } = create(of(repos));
-    expect(c.currentNamespace).toBe('anna');
-    expect(c.selectedRepositories.map((r) => r.name)).toEqual(['mine']);
-    expect(c.loading).toBe(false);
+    expect(c.currentNamespace()).toBe('anna');
+    expect(c.selectedRepositories().map((r) => r.name)).toEqual(['mine']);
+    expect(c.loading()).toBe(false);
   });
 
   it('should list the other namespaces sorted and without the own one', () => {
-    expect(create(of(repos)).componentInstance.otherNamespaces).toEqual(['alpha', 'team']);
+    expect(create(of(repos)).componentInstance.otherNamespaces()).toEqual(['alpha', 'team']);
   });
 
   it('should preselect the namespace given as query parameter', () => {
     const { componentInstance: c } = create(of(repos), { namespace: 'team' });
-    expect(c.currentNamespace).toBe('team');
-    expect(c.selectedRepositories.map((r) => r.name)).toEqual(['a', 'b']);
+    expect(c.currentNamespace()).toBe('team');
+    expect(c.selectedRepositories().map((r) => r.name)).toEqual(['a', 'b']);
   });
 
   it('should switch the namespace and fall back to the own one', () => {
     const { componentInstance: c } = create(of(repos));
     c.setNamespace('alpha');
-    expect(c.selectedRepositories.map((r) => r.name)).toEqual(['c']);
+    expect(c.selectedRepositories().map((r) => r.name)).toEqual(['c']);
     c.setNamespace('');
-    expect(c.currentNamespace).toBe('anna');
+    expect(c.currentNamespace()).toBe('anna');
   });
 
   it('should show nothing for an unknown namespace', () => {
     const { componentInstance: c } = create(of(repos));
     c.setNamespace('unknown');
-    expect(c.selectedRepositories).toEqual([]);
+    expect(c.selectedRepositories()).toEqual([]);
   });
 
   it('should be loading until the repositories arrived', () => {
     const subject = new Subject<Map<string, Repository[]>>();
     const { componentInstance: c } = create(subject);
-    expect(c.loading).toBe(true);
+    expect(c.loading()).toBe(true);
     subject.next(repos);
-    expect(c.loading).toBe(false);
+    expect(c.loading()).toBe(false);
   });
 
   it('should show error messages of plain errors', () => {
     const { componentInstance: c } = create(throwError(() => new Error('No user logged in')));
-    expect(c.loading).toBe(false);
-    expect(c.errorMessage).toBe('No user logged in');
+    expect(c.loading()).toBe(false);
+    expect(c.errorMessage()).toBe('No user logged in');
   });
 
   it('should join the messages the registry reports', () => {
@@ -90,11 +88,11 @@ describe('RepositoryOverviewComponent', () => {
       status: 401,
       error: { errors: [{ message: 'first' }, { message: 'second' }] },
     });
-    expect(create(throwError(() => error)).componentInstance.errorMessage).toBe('first second ');
+    expect(create(throwError(() => error)).componentInstance.errorMessage()).toBe('first second ');
   });
 
   it('should fall back to the http error message', () => {
     const error = new HttpErrorResponse({ status: 500, error: {} });
-    expect(create(throwError(() => error)).componentInstance.errorMessage).toContain('500');
+    expect(create(throwError(() => error)).componentInstance.errorMessage()).toContain('500');
   });
 });

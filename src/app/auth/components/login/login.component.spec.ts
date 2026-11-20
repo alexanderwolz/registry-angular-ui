@@ -1,5 +1,4 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -17,9 +16,7 @@ describe('LoginComponent', () => {
     options: { error?: Error | null; queryParams?: Record<string, string> } = {},
   ) {
     TestBed.configureTestingModule({
-      declarations: [LoginComponent],
-      imports: [ReactiveFormsModule],
-      schemas: [NO_ERRORS_SCHEMA],
+      imports: [ReactiveFormsModule, LoginComponent],
       providers: [
         ...TEST_PROVIDERS,
         {
@@ -57,14 +54,14 @@ describe('LoginComponent', () => {
       error: new Error('Host seems to be down. Check CORS settings.'),
     });
     expect(fixture.componentInstance.loginForm.disabled).toBe(true);
-    expect(fixture.componentInstance.errorMessage).toBe(
+    expect(fixture.componentInstance.errorMessage()).toBe(
       'Host seems to be down. Check CORS settings.',
     );
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('Host seems to be down');
   });
 
   it('should explain a missing provider even without a recorded error', () => {
-    expect(create(null).componentInstance.errorMessage).toContain('try page refresh');
+    expect(create(null).componentInstance.errorMessage()).toContain('try page refresh');
   });
 
   it('should skip the login for users who are already authenticated', () => {
@@ -76,7 +73,7 @@ describe('LoginComponent', () => {
     const login = vi.fn(() => of('anna'));
     const fixture = create(provider(login));
     submit(fixture, '', '');
-    expect(fixture.componentInstance.submitted).toBe(true);
+    expect(fixture.componentInstance.submitted()).toBe(true);
     expect(login).not.toHaveBeenCalled();
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('Username is required');
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('Password is required');
@@ -102,8 +99,8 @@ describe('LoginComponent', () => {
   it('should show the error of a failed login and allow another try', () => {
     const fixture = create(provider(() => throwError(() => new Error('Unauthorized'))));
     submit(fixture);
-    expect(fixture.componentInstance.errorMessage).toBe('Unauthorized');
-    expect(fixture.componentInstance.loading).toBe(false);
+    expect(fixture.componentInstance.errorMessage()).toBe('Unauthorized');
+    expect(fixture.componentInstance.loading()).toBe(false);
     expect(navigate).not.toHaveBeenCalled();
   });
 
@@ -114,6 +111,6 @@ describe('LoginComponent', () => {
     });
     const fixture = create(provider(() => throwError(() => error)));
     submit(fixture);
-    expect(fixture.componentInstance.errorMessage).toBe('one | two');
+    expect(fixture.componentInstance.errorMessage()).toBe('one | two');
   });
 });

@@ -8,6 +8,7 @@ import { Pagination } from '../models/pagination';
 import { Repository } from '../models/repository';
 import { RegistryUtils } from '../utils/registry-utils';
 import { RegistryService } from './registry.service';
+import { CHECK_PULL_ACCESS } from '../../app.tokens';
 
 const BASE = 'http://localhost:5000/v2/';
 const CONFIG_DIGEST = 'sha256:' + 'c'.repeat(64);
@@ -21,7 +22,7 @@ describe('RegistryService', () => {
     TestBed.configureTestingModule({
       providers: [
         ...TEST_PROVIDERS,
-        { provide: 'CHECK_PULL_ACCESS', useValue: checkPullAccess },
+        { provide: CHECK_PULL_ACCESS, useValue: checkPullAccess },
         {
           provide: AuthProviderService,
           useValue: {

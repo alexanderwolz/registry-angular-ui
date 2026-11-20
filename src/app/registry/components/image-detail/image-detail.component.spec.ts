@@ -1,5 +1,5 @@
+import { TemplateRef } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, of, throwError } from 'rxjs';
@@ -17,8 +17,7 @@ describe('ImageDetailComponent', () => {
 
   function create(tag$: Observable<Tag>, params: Record<string, string>) {
     TestBed.configureTestingModule({
-      declarations: [ImageDetailComponent, TimeAgoPipe],
-      schemas: [NO_ERRORS_SCHEMA],
+      imports: [ImageDetailComponent, TimeAgoPipe],
       providers: [
         ...TEST_PROVIDERS,
         routeParams(params),
@@ -39,15 +38,15 @@ describe('ImageDetailComponent', () => {
   it('should select the image whose short digest is in the route', () => {
     const t = tag('v1', repo, ['amd64', 'arm64']);
     const c = create(of(t), { ...full, image: t.images[1].digestShort });
-    expect(c.tag).toBe(t);
-    expect(c.image).toBe(t.images[1]);
-    expect(c.loading).toBe(false);
+    expect(c.tag()).toBe(t);
+    expect(c.image()).toBe(t.images[1]);
+    expect(c.loading()).toBe(false);
   });
 
   it('should select no image for an unknown digest', () => {
     const c = create(of(tag('v1', repo)), { ...full, image: 'ffffffffffff' });
-    expect(c.image).toBeNull();
-    expect(c.tag).not.toBeNull();
+    expect(c.image()).toBeNull();
+    expect(c.tag()).not.toBeNull();
   });
 
   it('should require name, tag and image', () => {
@@ -63,12 +62,12 @@ describe('ImageDetailComponent', () => {
       throwError(() => new HttpErrorResponse({ status: 404 })),
       { ...full, image: 'a' },
     );
-    expect(c.errorMessage).toMatch(/^Error 404:/);
+    expect(c.errorMessage()).toMatch(/^Error 404:/);
   });
 
   it('should open the layer dialog', () => {
     const c = create(of(tag('v1', repo)), { ...full, image: 'a' });
-    const content = {};
+    const content = {} as TemplateRef<unknown>;
     c.showLayerDialog(new Layer('RUN a', 1), content);
     expect(open).toHaveBeenCalledWith(
       content,

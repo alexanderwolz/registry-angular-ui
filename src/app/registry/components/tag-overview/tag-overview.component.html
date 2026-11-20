@@ -1,27 +1,28 @@
-@if (loading) {
+@if (loading()) {
   <div>
     <app-spinner></app-spinner>
   </div>
 }
 
-@if (!loading && repository && tagContainers) {
+@let repo = repository();
+@if (!loading() && repo) {
   <div>
     <app-breadcrumb-menu></app-breadcrumb-menu>
-    @if (errorMessage) {
+    @if (errorMessage()) {
       <div class="alert alert-danger" role="alert">
-        {{ errorMessage }}
+        {{ errorMessage() }}
         <a [routerLink]="'/repositories/'">
           <div>back to overview</div>
         </a>
       </div>
     }
     <div class="container my-4">
-      <app-title-box [segments]="repository.allNamespaces" [title]="repository.name">
-        @if (selection.length > 0) {
-          <app-tag-delete-button class="text-end" [tags]="selection"></app-tag-delete-button>
+      <app-title-box [segments]="repo.allNamespaces" [title]="repo.name">
+        @if (selection().length > 0) {
+          <app-tag-delete-button class="text-end" [tags]="selection()"></app-tag-delete-button>
         }
       </app-title-box>
-      @if (tagContainers.length == 0) {
+      @if (tagContainers().length === 0) {
         <div class="card">
           <div class="card-body">
             <div class="card-text">
@@ -33,7 +34,7 @@
           </div>
         </div>
       }
-      @if (tagContainers.length > 0) {
+      @if (tagContainers().length > 0) {
         <div class="form-check">
           <hr class="my-4" />
           <div class="select-all">
@@ -46,7 +47,7 @@
             <label class="form-check-label" for="flexCheckDefault"> Select all </label>
           </div>
           <hr class="my-4" />
-          @for (tagContainer of tagContainers; track tagContainer) {
+          @for (tagContainer of tagContainers(); track tagContainer) {
             <div>
               <input
                 class="form-check-input"

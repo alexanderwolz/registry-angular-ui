@@ -1,4 +1,4 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { TemplateRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -22,8 +22,7 @@ describe('TagDeleteButtonComponent', () => {
   function create(tags: Tag[]) {
     deleteTag = vi.fn(() => of(true));
     TestBed.configureTestingModule({
-      declarations: [TagDeleteButtonComponent],
-      schemas: [NO_ERRORS_SCHEMA],
+      imports: [TagDeleteButtonComponent],
       providers: [
         ...TEST_PROVIDERS,
         { provide: RegistryService, useValue: { deleteTag: (t: Tag) => deleteTag(t) } },
@@ -57,7 +56,7 @@ describe('TagDeleteButtonComponent', () => {
   it('should delete every tag after confirmation, announce success and go back to the repository', async () => {
     const tags = [tag('v1', repo), tag('v2', repo)];
     const fixture = create(tags);
-    fixture.componentInstance.delete(tags, {});
+    fixture.componentInstance.delete(tags, {} as TemplateRef<unknown>);
     await flush();
     expect(deleteTag.mock.calls.map(([t]) => t.name)).toEqual(['v1', 'v2']);
     expect(navigate).toHaveBeenCalledWith(['/repositories/team/app']);
@@ -71,7 +70,7 @@ describe('TagDeleteButtonComponent', () => {
   it('should delete nothing when the dialog is dismissed', async () => {
     confirmed = false;
     const tags = [tag('v1', repo)];
-    create(tags).componentInstance.delete(tags, {});
+    create(tags).componentInstance.delete(tags, {} as TemplateRef<unknown>);
     await flush();
     expect(deleteTag).not.toHaveBeenCalled();
     expect(emitted).toEqual([]);
@@ -81,7 +80,7 @@ describe('TagDeleteButtonComponent', () => {
     const tags = [tag('v1', repo)];
     const fixture = create(tags);
     deleteTag.mockReturnValue(of(false));
-    fixture.componentInstance.delete(tags, {});
+    fixture.componentInstance.delete(tags, {} as TemplateRef<unknown>);
     await flush();
     expect(navigate).not.toHaveBeenCalled();
     expect(emitted.length).toBe(1);
@@ -94,7 +93,7 @@ describe('TagDeleteButtonComponent', () => {
     const fixture = create(tags);
     const cause = new Error('405 Method Not Allowed');
     deleteTag.mockReturnValue(throwError(() => cause));
-    fixture.componentInstance.delete(tags, {});
+    fixture.componentInstance.delete(tags, {} as TemplateRef<unknown>);
     await flush();
     const event = emitted[0] as ErrorEvent;
     expect(event.message).toBe('Error while deleting tag <strong>team/app:v1</strong>');

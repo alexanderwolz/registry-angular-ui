@@ -21,11 +21,11 @@ export class EmptyAuthProvider extends AbstractAuthProvider {
     return Type.EMPTY;
   }
 
-  protected doLogin(username: string, password: string): Observable<Token> {
+  protected doLogin(username: string, _password: string): Observable<Token> {
     return of(new Token(username, ''));
   }
 
-  override doGetAuthorizationFor(token: Token, scope: Scope): Observable<string> {
+  override doGetAuthorizationFor(_token: Token, _scope: Scope): Observable<string> {
     return of('');
   }
 }

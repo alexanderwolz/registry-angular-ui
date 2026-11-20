@@ -26,8 +26,7 @@
     "bootstrap": "^5.3.9",
     "crypto-js": "^4.2.0",
     "rxjs": "~7.8.0",
-    "tslib": "^2.9.1",
-    "zone.js": "^0.16.3"
+    "tslib": "^2.9.1"
   },
   "devDependencies": {
     "@angular/build": "^22.2.3",

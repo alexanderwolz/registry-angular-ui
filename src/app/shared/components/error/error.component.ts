@@ -1,23 +1,26 @@
-import { Component, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnDestroy, inject, signal } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ErrorEvent } from 'src/app/shared/models/error-event';
 import { InfoEvent } from 'src/app/shared/models/info-event';
 import { Notification } from 'src/app/shared/models/notification';
 import { EventService } from 'src/app/shared/services/event.service';
+import { NgClass } from '@angular/common';
 
 @Component({
-  standalone: false,
   selector: 'app-error',
   templateUrl: './error.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./error.component.scss'],
+  imports: [NgClass],
 })
 export class ErrorComponent implements OnDestroy {
-  notifications: Notification[] = [];
+  notifications = signal<Notification[]>([]);
 
   private subscription: Subscription;
 
-  constructor(eventService: EventService) {
+  constructor() {
+    const eventService = inject(EventService);
+
     this.subscription = eventService.subject.subscribe({
       next: (event) => {
         if (event instanceof ErrorEvent) {
@@ -25,17 +28,23 @@ export class ErrorComponent implements OnDestroy {
           if (event.cause) {
             message += '<br><br>' + event.cause?.message;
           }
-          this.notifications.push(new Notification('Error:', message, 'alert-danger'));
+          this.notifications.update((list) => [
+            ...list,
+            new Notification('Error:', message, 'alert-danger'),
+          ]);
         }
         if (event instanceof InfoEvent) {
-          this.notifications.push(new Notification('Info:', event.message, 'alert-primary'));
+          this.notifications.update((list) => [
+            ...list,
+            new Notification('Info:', event.message, 'alert-primary'),
+          ]);
         }
       },
     });
   }
 
   removeNotification(notification: Notification) {
-    this.notifications = this.notifications.filter((n) => n != notification);
+    this.notifications.update((list) => list.filter((n) => n !== notification));
   }
 
   ngOnDestroy() {

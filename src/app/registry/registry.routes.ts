@@ -1,5 +1,4 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes, UrlMatchResult, UrlSegment } from '@angular/router';
+import { Routes, UrlMatchResult, UrlSegment } from '@angular/router';
 import { authGuard } from '../auth/guards/auth.guard';
 import { IndexComponent } from '../main/components/index/index.component';
 import { RepositoryDetailComponent } from './components/repository-detail/repository-detail.component';
@@ -8,7 +7,7 @@ import { TagDetailComponent } from './components/tag-detail/tag-detail.component
 import { TagOverviewComponent } from './components/tag-overview/tag-overview.component';
 import { ImageDetailComponent } from './components/image-detail/image-detail.component';
 
-const routes: Routes = [
+export const REGISTRY_ROUTES: Routes = [
   {
     path: '',
     children: [
@@ -109,9 +108,3 @@ export function repositoryDetails(segments: UrlSegment[]): UrlMatchResult | null
   //see https://angular.io/api/router/UrlMatchResult
   return null;
 }
-
-@NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule],
-})
-export class RegistryRoutingModule {}

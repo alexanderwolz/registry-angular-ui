@@ -1,15 +1,15 @@
-@if (loading) {
+@if (loading()) {
   <div>
     <app-spinner></app-spinner>
   </div>
 }
 
-@if (!loading) {
+@if (!loading()) {
   <div>
-    <app-breadcrumb-menu [namespace]="currentNamespace"></app-breadcrumb-menu>
-    @if (errorMessage) {
+    <app-breadcrumb-menu [namespace]="currentNamespace()"></app-breadcrumb-menu>
+    @if (errorMessage()) {
       <div class="alert alert-danger" role="alert">
-        {{ errorMessage }}
+        {{ errorMessage() }}
         <a [routerLink]="'/repositories/'">
           <div>back to overview</div>
         </a>
@@ -19,23 +19,23 @@
       <div class="row">
         <div class="dropdown namespace">
           <button
-            [disabled]="repositories.size == 0"
+            [disabled]="repositories().size === 0"
             class="btn btn-outline-primary dropdown-toggle"
             type="button"
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >
-            {{ currentNamespace }}
+            {{ currentNamespace() }}
           </button>
           <ul class="dropdown-menu">
             <li>
               <h6 class="dropdown-header">Select a namespace</h6>
-              @for (namespace of otherNamespaces; track namespace) {
+              @for (namespace of otherNamespaces(); track namespace) {
                 <button
                   class="dropdown-item"
                   type="button"
                   (click)="setNamespace(namespace)"
-                  [ngClass]="{ active: currentNamespace === namespace }"
+                  [ngClass]="{ active: currentNamespace() === namespace }"
                 >
                   {{ namespace }}
                 </button>
@@ -46,7 +46,7 @@
                 class="dropdown-item"
                 type="button"
                 (click)="setNamespace(userNamespace)"
-                [ngClass]="{ active: currentNamespace === userNamespace }"
+                [ngClass]="{ active: currentNamespace() === userNamespace }"
               >
                 {{ userNamespace }}
               </button>
@@ -55,17 +55,17 @@
         </div>
       </div>
       <div class="row">
-        @if (repositories.size == 0) {
+        @if (repositories().size === 0) {
           <app-title-box title="This registry does not contain any repositories yet!">
           </app-title-box>
         }
-        @if (repositories.size > 0 && selectedRepositories.length == 0) {
+        @if (repositories().size > 0 && selectedRepositories().length === 0) {
           <app-title-box
-            title="Namespace '{{ currentNamespace }}' does not contain any repositories yet!"
+            title="Namespace '{{ currentNamespace() }}' does not contain any repositories yet!"
           >
           </app-title-box>
         }
-        @for (repository of selectedRepositories; track repository) {
+        @for (repository of selectedRepositories(); track repository) {
           <div>
             <app-link-box [routerLink]="'/repositories/' + repository.getRelativePath()">
               <app-title [segments]="repository.allNamespaces" [title]="repository.name">

@@ -1,33 +1,43 @@
-import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, ChangeDetectionStrategy, OnInit, inject, signal } from '@angular/core';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { first } from 'rxjs';
 import { AuthProvider } from 'src/app/auth/providers/auth-provider';
 import { AuthProviderService } from 'src/app/auth/services/auth-provider.service';
 import { EmptyAuthProvider } from '../../providers/empty-auth-provider';
+import { LogoComponent } from '../../../shared/components/logo/logo.component';
+import { NgClass } from '@angular/common';
 
 @Component({
-  standalone: false,
   selector: 'app-login',
   templateUrl: './login.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./login.component.scss'],
+  imports: [LogoComponent, ReactiveFormsModule, NgClass],
 })
 export class LoginComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private authProviderService = inject(AuthProviderService);
+
   private authProvider: AuthProvider | null;
 
   loginForm: FormGroup = this.createLoginForm();
-  submitted = false;
-  loading = false;
-  redirect?: string;
-  errorMessage = '';
+  submitted = signal(false);
+  loading = signal(false);
+  errorMessage = signal('');
+  private redirect?: string;
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private route: ActivatedRoute,
-    private router: Router,
-    private authProviderService: AuthProviderService,
-  ) {
+  constructor() {
+    const authProviderService = this.authProviderService;
+
     this.authProvider = authProviderService.getAuthProvider();
   }
 
@@ -44,7 +54,7 @@ export class LoginComponent implements OnInit {
       const message =
         this.authProviderService.getError()?.message ||
         'No authentication provider could be retrieved - try page refresh.';
-      this.errorMessage = message;
+      this.errorMessage.set(message);
       return;
     }
 
@@ -52,7 +62,6 @@ export class LoginComponent implements OnInit {
       this.router.navigate(['/']);
     }
 
-    this.loginForm = this.createLoginForm(); //do we need that?
     this.redirect = this.route.snapshot.queryParams['redirect'];
   }
 
@@ -64,17 +73,17 @@ export class LoginComponent implements OnInit {
     );
   }
 
-  get form(): Record<string, AbstractControl<any>> {
+  get form(): Record<string, AbstractControl> {
     return this.loginForm.controls;
   }
 
   onSubmit() {
-    this.submitted = true;
+    this.submitted.set(true);
     if (this.loginForm.invalid) {
       return;
     }
 
-    this.loading = true;
+    this.loading.set(true);
     this.authProvider
       ?.login(this.form['username'].value, this.form['password'].value)
       .pipe(first())
@@ -86,15 +95,15 @@ export class LoginComponent implements OnInit {
           let errorMessage = error.message;
           if (error.error?.errors?.length > 0) {
             errorMessage = '';
-            error.error.errors.forEach((value: any, index: number) => {
+            error.error.errors.forEach((value: { message: string }, index: number) => {
               errorMessage += value.message;
               if (index < error?.error?.errors.length - 1) {
                 errorMessage += ' | ';
               }
             });
           }
-          this.errorMessage = errorMessage;
-          this.loading = false;
+          this.errorMessage.set(errorMessage);
+          this.loading.set(false);
         },
       });
   }

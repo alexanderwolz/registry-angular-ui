@@ -3,7 +3,7 @@ import { FooterComponent } from './footer.component';
 
 describe('FooterComponent', () => {
   it('should link to the project on github in a new tab', () => {
-    TestBed.configureTestingModule({ declarations: [FooterComponent] });
+    TestBed.configureTestingModule({ imports: [FooterComponent] });
     const fixture = TestBed.createComponent(FooterComponent);
     fixture.detectChanges();
     const link = (fixture.nativeElement as HTMLElement).querySelector('a')!;

@@ -1,6 +1,5 @@
 import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
-import { Params } from '@angular/router';
+import { Injectable, inject } from '@angular/core';
 import {
   Observable,
   catchError,
@@ -24,6 +23,16 @@ import { Repository } from '../models/repository';
 import { Tag } from '../models/tag';
 import { StorageService } from 'src/app/shared/services/storage.service';
 import { RegistryUtils } from '../utils/registry-utils';
+import { REGISTRY_HOST, CHECK_PULL_ACCESS } from '../../app.tokens';
+
+interface CatalogResponse {
+  repositories: string[] | null;
+}
+
+interface TagListResponse {
+  name: string;
+  tags: string[] | null;
+}
 
 const KEY_TAG_NAMES = 'TAG_NAMES';
 const KEY_TAGS = 'TAGS';
@@ -36,6 +45,12 @@ const KEY_REPOS = 'REPOS';
 //see also https://docs.docker.com/registry/spec/api/
 //this service tries to wrap this API
 export class RegistryService {
+  private http = inject(HttpClient);
+  private authProviderService = inject(AuthProviderService);
+  private storageService = inject(StorageService);
+  private registryHost = inject(REGISTRY_HOST);
+  private checkPullAccess = inject(CHECK_PULL_ACCESS);
+
   private allTagNames = this.storageService.getMapCache<string, string[]>(KEY_TAG_NAMES);
   private tags = this.storageService.getMapCache<string, Tag>(KEY_TAGS);
   private allRepositoryNames = this.storageService.getArrayCache<string>(KEY_REPO_NAMES);
@@ -43,13 +58,9 @@ export class RegistryService {
 
   readonly registry: string;
 
-  constructor(
-    private http: HttpClient,
-    private authProviderService: AuthProviderService,
-    private storageService: StorageService,
-    @Inject('REGISTRY_HOST') private registryHost: string,
-    @Inject('CHECK_PULL_ACCESS') private checkPullAccess: boolean,
-  ) {
+  constructor() {
+    const registryHost = this.registryHost;
+
     this.registry = registryHost.replace('http://', '').replaceAll('https://', '');
   }
 
@@ -63,7 +74,7 @@ export class RegistryService {
     );
   }
 
-  loadTags(repository: Repository, pagination?: Pagination): Observable<any[]> {
+  loadTags(repository: Repository, pagination?: Pagination): Observable<Tag[]> {
     return this.loadTagNames(repository, pagination).pipe(
       concatMap((tagNames) => {
         if (tagNames.length > 0) {
@@ -95,9 +106,12 @@ export class RegistryService {
   loadTagNames(repository: Repository, pagination?: Pagination): Observable<string[]> {
     const endpoint = repository.getRelativePath() + '/tags/list';
     const scope = new Scope('repository', repository.getRelativePath(), ['pull']);
-    return this.get(endpoint, scope, undefined, this.createPaginationQueryParams(pagination)).pipe(
-      map((httpResponse) => httpResponse.body.tags || []),
-    );
+    return this.get<TagListResponse>(
+      endpoint,
+      scope,
+      undefined,
+      this.createPaginationQueryParams(pagination),
+    ).pipe(map((httpResponse) => httpResponse.body?.tags ?? []));
   }
 
   getTag(repository: Repository, tagName: string): Observable<Tag> {
@@ -190,8 +204,8 @@ export class RegistryService {
     //we have to differ between these two content types
     //see https://docs.docker.com/registry/spec/api/
     const headers = RegistryUtils.getAllManifestsAcceptHeader();
-    return this.get(endpoint, scope, headers, undefined).pipe(
-      mergeMap((response: HttpResponse<any>) => {
+    return this.get<Manifest | ManifestList>(endpoint, scope, headers, undefined).pipe(
+      mergeMap((response) => {
         const digest =
           response.headers.get('docker-content-digest') || response.headers.get('etag');
         //TODO docker-content-digest, ETag headers for delete
@@ -234,9 +248,12 @@ export class RegistryService {
   private loadRepositoryNames(pagination?: Pagination): Observable<string[]> {
     const endpoint = '_catalog';
     const scope = new Scope('registry', 'catalog', ['*']);
-    return this.get(endpoint, scope, undefined, this.createPaginationQueryParams(pagination)).pipe(
-      map((httpResponse) => httpResponse.body.repositories),
-    );
+    return this.get<CatalogResponse>(
+      endpoint,
+      scope,
+      undefined,
+      this.createPaginationQueryParams(pagination),
+    ).pipe(map((httpResponse) => httpResponse.body?.repositories ?? []));
   }
 
   private createNamespaceMap(repositories: Repository[]): Map<string, Repository[]> {
@@ -260,17 +277,15 @@ export class RegistryService {
     const endpoint = repository.getRelativePath() + '/manifests/' + digest;
     const scope = new Scope('repository', repository.getRelativePath(), ['pull']);
     const headers = RegistryUtils.getManifestAcceptHeader();
-    return this.get(endpoint, scope, headers, undefined).pipe(
-      map((response: HttpResponse<any>) => {
-        return response.body as Manifest;
-      }),
+    return this.get<Manifest>(endpoint, scope, headers, undefined).pipe(
+      map((response) => response.body as Manifest),
     );
   }
 
   private loadConfiguration(repository: Repository, digest: string): Observable<Configuration> {
     const endpoint = repository.getRelativePath() + '/blobs/' + digest;
     const scope = new Scope('repository', repository.getRelativePath(), ['pull']);
-    return this.get(endpoint, scope).pipe(map((response) => response.body));
+    return this.get<Configuration>(endpoint, scope).pipe(map((response) => response.body!));
   }
 
   private createPaginationQueryParams(pagination?: Pagination): HttpParams | undefined {
@@ -285,62 +300,38 @@ export class RegistryService {
     return queryParams;
   }
 
-  private get(
+  private get<T>(
     endpoint: string,
     scope: Scope,
     headers?: HttpHeaders,
     params?: HttpParams,
-  ): Observable<HttpResponse<any>> {
-    return this.createAuthorizationHeader(scope).pipe(
-      mergeMap((authorization) => {
-        const httpOptions: Params = {};
-        httpOptions['observe'] = 'response';
-
-        let httpheaders = headers ? headers : new HttpHeaders();
-
-        if (authorization) {
-          httpheaders = httpheaders.append('Authorization', authorization);
-          httpOptions['withCredentials'] = false; //do not show basic auth prompt
-        }
-        if (params) {
-          httpOptions['params'] = params;
-        }
-        if (httpheaders.keys().length > 0) {
-          httpOptions['headers'] = httpheaders;
-        }
-
-        const url = this.registryHost + '/v2/' + endpoint;
-        return this.http.get(url, httpOptions) as Observable<HttpResponse<any>>;
-      }),
-    );
+  ): Observable<HttpResponse<T>> {
+    return this.request<T>('GET', endpoint, scope, headers, params);
   }
 
-  private delete(
+  private delete(endpoint: string, scope: Scope): Observable<HttpResponse<unknown>> {
+    return this.request<unknown>('DELETE', endpoint, scope);
+  }
+
+  private request<T>(
+    method: 'GET' | 'DELETE',
     endpoint: string,
     scope: Scope,
     headers?: HttpHeaders,
     params?: HttpParams,
-  ): Observable<HttpResponse<any>> {
+  ): Observable<HttpResponse<T>> {
     return this.createAuthorizationHeader(scope).pipe(
       mergeMap((authorization) => {
-        const httpOptions: Params = {};
-        httpOptions['observe'] = 'response';
-
-        let httpheaders = headers ? headers : new HttpHeaders();
-
+        let httpHeaders = headers ?? new HttpHeaders();
         if (authorization) {
-          httpheaders = httpheaders.append('Authorization', authorization);
-          httpOptions['withCredentials'] = false; //do not show basic auth prompt
+          httpHeaders = httpHeaders.append('Authorization', authorization);
         }
-        if (params) {
-          httpOptions['params'] = params;
-        }
-        if (httpheaders.keys().length > 0) {
-          httpOptions['headers'] = httpheaders;
-        }
-
-        const url = this.registryHost + '/v2/' + endpoint;
-        return this.http.delete(url, httpOptions) as Observable<HttpResponse<any>>;
+        return this.http.request<T>(method, this.registryHost + '/v2/' + endpoint, {
+          observe: 'response',
+          headers: httpHeaders,
+          params,
+          withCredentials: authorization ? false : undefined, //do not show basic auth prompt
+        });
       }),
     );
   }
