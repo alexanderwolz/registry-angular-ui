@@ -47,6 +47,7 @@ This web application supports the following environment variables:
 |```REGISTRY_HOST```              | URL of the registry to connect to with scheme http/https                        |
 |```TOKEN_SECRET```               | Secret used for encrypting the base64 credentials                               |
 |```CHECK_PULL_ACCESS```          | If set to ```true```, each repository is being checked for pull permissions     |
+|```SECURITY_HEADERS```           | Set to ```false``` if a gateway or proxy in front already sets security headers (default ```true```) |
 
 ## 🔍 Examples
 

@@ -28,10 +28,13 @@ LABEL maintainer="mail@alexanderwolz.de"
 ENV REGISTRY_HOST=http://localhost:5000
 ENV TOKEN_SECRET=PleaseReplaceMeAsSoonAsPossible
 ENV CHECK_PULL_ACCESS=false
+ENV SECURITY_HEADERS=true
 
 RUN apk upgrade --no-cache
 
-COPY --chown=nginx:nginx nginx.conf security-headers.conf /etc/nginx/
+COPY --chown=nginx:nginx nginx.conf /etc/nginx/nginx.conf
+COPY --chown=nginx:nginx security-headers.conf /etc/nginx/security-headers.conf
+COPY --chown=nginx:nginx security-headers.conf /etc/nginx/security-headers.default
 COPY --chown=nginx:nginx --from=build /app/dist/registry-fronted/ /usr/share/nginx/html
 
 RUN chown nginx:nginx /usr/share/nginx /usr/share/nginx/html \
@@ -45,9 +48,11 @@ WORKDIR /usr/share/nginx
 
 USER nginx
 
-RUN echo "for file in html/*.js; do \
+RUN echo "if [ \"\${SECURITY_HEADERS}\" = \"false\" ]; then : > /etc/nginx/security-headers.conf; \
+    else cp /etc/nginx/security-headers.default /etc/nginx/security-headers.conf; fi; \
+    for file in html/*.js; do \
     envsubst '\${REGISTRY_HOST} \${TOKEN_SECRET} \${CHECK_PULL_ACCESS}' < \${file} > file.tmp \
     && mv file.tmp \${file}; done \
-    && nginx -g 'daemon off;'" > run.sh
+    && exec nginx -g 'daemon off;'" > run.sh
 
 CMD [ "sh", "run.sh" ]
