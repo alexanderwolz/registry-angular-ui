@@ -27,9 +27,13 @@
                         [ngClass]="{ 'is-invalid': submitted && form['username'].errors }"
                       />
                       <label for="floatingInput">Username</label>
-                      <div *ngIf="submitted && form['username'].errors" class="invalid-feedback">
-                        <div *ngIf="form['username'].errors['required']">Username is required</div>
-                      </div>
+                      @if (submitted && form['username'].errors) {
+                        <div class="invalid-feedback">
+                          @if (form['username'].errors['required']) {
+                            <div>Username is required</div>
+                          }
+                        </div>
+                      }
                     </div>
                     <div class="form-floating mb-3">
                       <input
@@ -41,9 +45,13 @@
                         [ngClass]="{ 'is-invalid': submitted && form['password'].errors }"
                       />
                       <label for="floatingPassword">Password</label>
-                      <div *ngIf="submitted && form['password'].errors" class="invalid-feedback">
-                        <div *ngIf="form['password'].errors['required']">Password is required</div>
-                      </div>
+                      @if (submitted && form['password'].errors) {
+                        <div class="invalid-feedback">
+                          @if (form['password'].errors['required']) {
+                            <div>Password is required</div>
+                          }
+                        </div>
+                      }
                     </div>
 
                     <div class="d-grid">
@@ -57,9 +65,11 @@
                     </div>
 
                     <div class="d-grid">
-                      <div *ngIf="errorMessage" class="alert alert-danger mt-3 mb-0">
-                        {{ errorMessage }}
-                      </div>
+                      @if (errorMessage) {
+                        <div class="alert alert-danger mt-3 mb-0">
+                          {{ errorMessage }}
+                        </div>
+                      }
                     </div>
                   </form>
                 </div>
@@ -73,36 +83,36 @@
 </div>
 
 <!-- <div class="container">
-    <div class="row">
-        <div class="col-md-6 offset-md-3 mt-5">
-            <div class="card">
-                <h4 class="card-header">Login</h4>
-                <div class="card-body">
-                    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-                        <div class="form-group">
-                            <label for="username">Username</label>
-                            <input type="text" formControlName="username" class="form-control"
-                                [ngClass]="{ 'is-invalid': submitted && form.username.errors }" />
-                            <div *ngIf="submitted && form.username.errors" class="invalid-feedback">
-                                <div *ngIf="form.username.errors.required">Username is required</div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <input type="password" formControlName="password" class="form-control"
-                                [ngClass]="{ 'is-invalid': submitted && form.password.errors }" />
-                            <div *ngIf="submitted && form.password.errors" class="invalid-feedback">
-                                <div *ngIf="form.password.errors.required">Password is required</div>
-                            </div>
-                        </div>
-                        <button [disabled]="loading" class="btn btn-primary" style="margin-top: 1em;">
-                            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
-                            Login
-                        </button>
-                        <div *ngIf="errorMessage" class="alert alert-danger mt-3 mb-0">{{errorMessage}}</div>
-                    </form>
-                </div>
+<div class="row">
+  <div class="col-md-6 offset-md-3 mt-5">
+    <div class="card">
+      <h4 class="card-header">Login</h4>
+      <div class="card-body">
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" formControlName="username" class="form-control"
+              [ngClass]="{ 'is-invalid': submitted && form.username.errors }" />
+            <div *ngIf="submitted && form.username.errors" class="invalid-feedback">
+              <div *ngIf="form.username.errors.required">Username is required</div>
             </div>
-        </div>
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" formControlName="password" class="form-control"
+              [ngClass]="{ 'is-invalid': submitted && form.password.errors }" />
+            <div *ngIf="submitted && form.password.errors" class="invalid-feedback">
+              <div *ngIf="form.password.errors.required">Password is required</div>
+            </div>
+          </div>
+          <button [disabled]="loading" class="btn btn-primary" style="margin-top: 1em;">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+            Login
+          </button>
+          <div *ngIf="errorMessage" class="alert alert-danger mt-3 mb-0">{{errorMessage}}</div>
+        </form>
+      </div>
     </div>
+  </div>
+</div>
 </div> -->

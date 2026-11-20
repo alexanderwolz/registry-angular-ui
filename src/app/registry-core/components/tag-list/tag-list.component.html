@@ -7,27 +7,35 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let tag of tags">
-      <td>
-        <a [routerLink]="'/repositories/' + tag.repository.getRelativePath() + '/tags/' + tag.name">
-          {{ tag.name }}
-        </a>
-      </td>
-      <td>
-        <span *ngFor="let os of tag.getPlatformNames()" [ngbTooltip]="tag.getPlatformTooltip(os)">
-          {{ os }}
-        </span>
-      </td>
-      <td>
-        <span placement="top" [ngbTooltip]="tag.mediaType">
-          {{ tag.getType() }}
-        </span>
-      </td>
-    </tr>
-    <tr *ngIf="showMoreLine">
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
+    @for (tag of tags; track tag) {
+      <tr>
+        <td>
+          <a
+            [routerLink]="'/repositories/' + tag.repository.getRelativePath() + '/tags/' + tag.name"
+          >
+            {{ tag.name }}
+          </a>
+        </td>
+        <td>
+          @for (os of tag.getPlatformNames(); track os) {
+            <span [ngbTooltip]="tag.getPlatformTooltip(os)">
+              {{ os }}
+            </span>
+          }
+        </td>
+        <td>
+          <span placement="top" [ngbTooltip]="tag.mediaType">
+            {{ tag.getType() }}
+          </span>
+        </td>
+      </tr>
+    }
+    @if (showMoreLine) {
+      <tr>
+        <td>...</td>
+        <td>...</td>
+        <td>...</td>
+      </tr>
+    }
   </tbody>
 </table>

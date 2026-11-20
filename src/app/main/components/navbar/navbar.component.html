@@ -18,38 +18,42 @@
 
     <div class="collapse navbar-collapse" id="navbarMenu">
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-        <li class="nav-item" *ngFor="let segment of segments">
-          <a
-            class="nav-link"
-            [routerLink]="segment.routerLink"
-            [queryParams]="segment.queryParams"
-            [attr.aria-current]="segment.active ? 'page' : null"
-            [ngClass]="{ active: segment.active === true }"
-          >
-            {{ segment.name }}
-          </a>
-        </li>
+        @for (segment of segments; track segment) {
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              [routerLink]="segment.routerLink"
+              [queryParams]="segment.queryParams"
+              [attr.aria-current]="segment.active ? 'page' : null"
+              [ngClass]="{ active: segment.active === true }"
+            >
+              {{ segment.name }}
+            </a>
+          </li>
+        }
 
         <!-- logout -->
-        <li class="nav-item dropdown" *ngIf="isAuthActive">
-          <a
-            class="nav-link dropdown-toggle"
-            href="#"
-            role="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            {{ username }}
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end">
-            <li>
-              <a class="dropdown-item" [routerLink]="['/logout']">
-                <i class="fas fa-sign-out-alt"></i>
-                Logout
-              </a>
-            </li>
-          </ul>
-        </li>
+        @if (isAuthActive) {
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              {{ username }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li>
+                <a class="dropdown-item" [routerLink]="['/logout']">
+                  <i class="fas fa-sign-out-alt"></i>
+                  Logout
+                </a>
+              </li>
+            </ul>
+          </li>
+        }
       </ul>
     </div>
   </div>

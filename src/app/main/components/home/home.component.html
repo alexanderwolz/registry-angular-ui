@@ -1,33 +1,40 @@
-<div *ngIf="loading">
-  <app-spinner></app-spinner>
-</div>
+@if (loading) {
+  <div>
+    <app-spinner></app-spinner>
+  </div>
+}
 
-<div *ngIf="!loading">
-  <div class="container mt-5">
-    <div class="jumbotron">
-      <h1 class="display-8">Hello, {{ username }}!</h1>
-      <p class="lead">
-        This is a simple Docker registry frontend for lightweight repository management.
-      </p>
-      <hr class="my-4" />
-
-      <div>
-        <div *ngIf="totalRepositoryCount === 0">
-          Registry <span class="lead">{{ registry }}</span> seems to be empty , so take the chance
-          to push some images 🥳
+@if (!loading) {
+  <div>
+    <div class="container mt-5">
+      <div class="jumbotron">
+        <h1 class="display-8">Hello, {{ username }}!</h1>
+        <p class="lead">
+          This is a simple Docker registry frontend for lightweight repository management.
+        </p>
+        <hr class="my-4" />
+        <div>
+          @if (totalRepositoryCount === 0) {
+            <div>
+              Registry <span class="lead">{{ registry }}</span> seems to be empty , so take the
+              chance to push some images 🥳
+            </div>
+          }
+          @if (totalRepositoryCount > 0) {
+            <div>
+              There {{ totalRepositoryCount == 1 ? 'is' : 'are' }}
+              <span class="lead">{{ totalRepositoryCount }} repositories</span> at registry
+              <span class="lead">{{ registry }}</span> in total.
+            </div>
+          }
+          <br />
         </div>
-        <div *ngIf="totalRepositoryCount > 0">
-          There {{ totalRepositoryCount == 1 ? 'is' : 'are' }}
-          <span class="lead">{{ totalRepositoryCount }} repositories</span> at registry
-          <span class="lead">{{ registry }}</span> in total.
-        </div>
-        <br />
+        <p class="lead">
+          <a class="btn btn-outline-primary btn-sm" role="button" [routerLink]="['/repositories']"
+            >Explore Docker Repositories</a
+          >
+        </p>
       </div>
-      <p class="lead">
-        <a class="btn btn-outline-primary btn-sm" role="button" [routerLink]="['/repositories']"
-          >Explore Docker Repositories</a
-        >
-      </p>
     </div>
   </div>
-</div>
+}
