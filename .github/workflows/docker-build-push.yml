@@ -1,0 +1,72 @@
+name: Build and Push Docker Image
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Determine version from package.json
+        id: package-version
+        run: |
+          VERSION=$(jq -r '.version // empty' package.json)
+          if [ -z "$VERSION" ]; then
+            echo "[ERROR] Could not determine version from package.json"
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Verify release tag matches package.json version
+        env:
+          TAG_NAME: ${{ github.event.release.tag_name }}
+          PACKAGE_VERSION: ${{ steps.package-version.outputs.version }}
+        run: |
+          TAG_VERSION="${TAG_NAME#v}"
+          if [ "$TAG_VERSION" != "$PACKAGE_VERSION" ]; then
+            echo "[ERROR] Release tag ($TAG_NAME) does not match version in package.json ($PACKAGE_VERSION)"
+            exit 1
+          fi
+
+      - name: Determine image tags
+        id: image-tags
+        env:
+          VERSION: ${{ steps.package-version.outputs.version }}
+          PRERELEASE: ${{ github.event.release.prerelease }}
+        run: |
+          TAGS="alexanderwolz/registry-angular-ui:${VERSION}"
+          # pre-releases must not move the latest tag
+          if [ "$PRERELEASE" != "true" ]; then
+            TAGS="${TAGS}"$'\n'"alexanderwolz/registry-angular-ui:latest"
+          fi
+          {
+            echo "tags<<EOF"
+            echo "$TAGS"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: alexanderwolz
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.image-tags.outputs.tags }}
+          cache-from: type=gha,scope=registry-angular-ui
+          cache-to: type=gha,mode=max,scope=registry-angular-ui

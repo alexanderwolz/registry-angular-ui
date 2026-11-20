@@ -2,9 +2,9 @@
 
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/alexanderwolz/registry-angular-ui)
 ![Docker Pulls](https://img.shields.io/docker/pulls/alexanderwolz/registry-angular-ui)
-![GitHub](https://img.shields.io/badge/angular-16.0.3-orange)
-![GitHub](https://img.shields.io/badge/bootstrap-5.2.3-orange)
-![GitHub](https://img.shields.io/badge/registry-2.8.2-orange)
+![GitHub](https://img.shields.io/badge/angular-22.3-orange)
+![GitHub](https://img.shields.io/badge/bootstrap-5.3.9-orange)
+![GitHub](https://img.shields.io/badge/registry-2.8.3-orange)
 ![GitHub](https://img.shields.io/github/license/alexanderwolz/registry-angular-ui)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/alexanderwolz/registry-angular-ui)
 ![GitHub all releases](https://img.shields.io/github/downloads/alexanderwolz/registry-angular-ui/total?color=informational)
@@ -27,9 +27,17 @@ Simple Angular- and Bootstrap-based web application for Docker Registry V2 with 
 
 ## 🛠️ Build
 ### Using prebuild image from Docker Hub
-- Download image: ```docker pull alexanderwolz/registry-angular-ui:latest```
+- Download image: ```docker pull alexanderwolz/registry-angular-ui:1.3.0```
 ### Build yourself
 - ```docker build -t registry-angular-ui:latest .```
+
+### Release
+Publishing a GitHub release builds and pushes the image to Docker Hub (see `.github/workflows/docker-build-push.yml`):
+1. Set the new `version` in `package.json` and merge it
+2. Publish a release whose tag matches that version, e.g. `v1.3.0` (the build fails if tag and `package.json` differ)
+3. The image is pushed as `alexanderwolz/registry-angular-ui:<version>`
+
+The repository needs the secret `DOCKERHUB_TOKEN` (access token of the Docker Hub user `alexanderwolz`).
 
 ## ⚙️ Configuration
 This web application supports the following environment variables:
